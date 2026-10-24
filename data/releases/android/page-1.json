@@ -1,0 +1,22 @@
+{
+ "page": 1,
+ "pages": 1,
+ "releases": [
+  {
+   "tag_name": "v1.0.0-rc.1",
+   "name": "Gazeora v1.0.0-rc.1",
+   "prerelease": true,
+   "published_at": "2026-10-24T12:44:29Z",
+   "html_url": "https://github.com/Gazeora/Gazeora-Android/releases/tag/v1.0.0-rc.1",
+   "body": "The first release candidate of Gazeora for Android: the viewer that plays your PC's game stream on your phone, flat or for a VR viewer, over Wi-Fi or a USB cable. It works with [Gazeora for Windows](https://gazeora.github.io/download.html) on your PC.\n\nThis is a pre-release. Please try it and [report what you find](https://github.com/Gazeora/Gazeora/issues/new/choose).\n\n## Download\n\n`Gazeora-v1.0.0-rc.1.apk`, for Android 10 or newer. Open it on your phone; if Android asks, allow your browser or file manager to install apps.\n\n## What's in it\n\n- **Finds your PC by itself** on the local network, or connect by typing its address.\n- **Every stream protocol** Gazeora offers: RTSP over TCP or UDP, raw UDP, HTTP and USB.\n- **USB accessory mode:** when the PC switches the phone over, the app opens straight into the stream, and reconnects when the cable is plugged back in.\n- **Follows the PC:** if the PC changes protocol mid-stream, the player switches with it.\n- **VR viewer mode** with lens correction done on the phone, so the picture stays sharp.\n- **Touch as a mouse** on a flat picture: tap to click, move a finger to scroll.\n- **Hardware decoding** of H.264 and H.265, using low-latency decoders where the phone has them.\n",
+   "assets": [
+    {
+     "name": "Gazeora-v1.0.0-rc.1.apk",
+     "size": 6751629,
+     "browser_download_url": "https://github.com/Gazeora/Gazeora-Android/releases/download/v1.0.0-rc.1/Gazeora-v1.0.0-rc.1.apk",
+     "digest": "sha256:d38dc439dc8cbabad2042d4b74c6a607904a5e827b5c4dd1593fe40b7fb540ef"
+    }
+   ]
+  }
+ ]
+}
