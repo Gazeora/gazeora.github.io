@@ -270,6 +270,32 @@ details.release[open] > summary::after { transform: rotate(-135deg); }
 details.release .downloads { padding-top: 0; }
 details.release .release-date { margin-left: auto; }
 
+.release-meta {
+  display: flex; flex-wrap: wrap; gap: 4px 20px;
+  padding: 14px 24px 4px; color: var(--text-faint); font-size: 14px;
+}
+.latest .notes-toggle { border-top: 1px solid var(--border); margin-top: 16px; }
+.latest .notes-toggle + .notes-toggle { margin-top: 0; }
+
+.tabs {
+  display: flex; gap: 4px; margin-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.tab {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: 600 15px var(--font); color: var(--text-dim); cursor: pointer;
+  background: none; border: 0; border-bottom: 2px solid transparent;
+  padding: 10px 16px; margin-bottom: -1px;
+}
+.tab:hover { color: var(--text); }
+.tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
+.tab:focus-visible { outline: 2px solid var(--accent-end); outline-offset: 2px; }
+.tab-count {
+  font-size: 12px; padding: 1px 8px; border-radius: 999px;
+  background: var(--card-hover); color: var(--text-dim);
+}
+[role="tabpanel"][hidden] { display: none; }
+
 .release-foot { margin: 24px 0 0; color: var(--text-dim); font-size: 15px; }
 
 /* Docs */
@@ -326,6 +352,7 @@ details.release .release-date { margin-left: auto; }
 .chip[aria-pressed="true"] { background: var(--card-hover); color: var(--text); box-shadow: inset 0 0 0 1px var(--border); }
 .chip:focus-visible, .copy:focus-visible, .notes-toggle summary:focus-visible { outline: 2px solid var(--accent-end); outline-offset: 2px; }
 
+.version { scroll-margin-top: 88px; }
 .version .release-head { padding-bottom: 16px; }
 .version h3 .anchor { color: var(--text); }
 .files { border-top: 1px solid var(--border); }
@@ -547,7 +574,7 @@ details.release .release-date { margin-left: auto; }
   .file-sha { grid-column: 1 / -1; }
   .file > span:empty { display: none; }
   .downloads .download, .cta .download { flex: 1 1 100%; }
-  .release-head, .downloads { padding-left: 16px; padding-right: 16px; }
+  .release-head, .downloads, .release-meta { padding-left: 16px; padding-right: 16px; }
   .notes-toggle > summary, .release-body { padding-left: 16px; padding-right: 16px; }
   .md-body h2 { font-size: 23px; margin-top: 40px; }
   .md-body pre { font-size: 12.5px; padding: 14px; }
