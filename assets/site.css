@@ -239,6 +239,7 @@ td:last-child { color: var(--text-dim); }
 .release-head h3 { font-size: 22px; }
 .release-date { color: var(--text-faint); font-size: 14px; margin-left: auto; }
 .badge {
+  display: inline-block; white-space: nowrap; line-height: 1.5;
   padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
   text-transform: uppercase; letter-spacing: .05em;
 }
@@ -279,7 +280,7 @@ details.release .release-date { margin-left: auto; }
   display: flex; flex-wrap: wrap; gap: 4px 20px;
   padding: 14px 24px 4px; color: var(--text-faint); font-size: 14px;
 }
-.release-meta .badge { margin-left: 8px; vertical-align: 1px; }
+.release-meta > span { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
 .latest .notes-toggle { border-top: 1px solid var(--border); margin-top: 16px; }
 .latest .notes-toggle + .notes-toggle { margin-top: 0; }
 
@@ -394,7 +395,8 @@ details.release .release-date { margin-left: auto; }
 .download { padding-block: 10px; text-align: left; }
 .download svg { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .download-text { display: flex; flex-direction: column; line-height: 1.25; }
-.download-text small { font-size: 12px; font-weight: 500; opacity: .75; }
+.download-text small { font-size: 12px; font-weight: 500; opacity: .75; white-space: normal; }
+.download, .download-text { min-width: 0; }
 .download.is-disabled { opacity: .5; cursor: default; }
 .download.is-disabled:hover { transform: none; background: var(--card); }
 .downloads-center { justify-content: center; padding: 0; }
