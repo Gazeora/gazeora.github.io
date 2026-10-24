@@ -382,17 +382,19 @@
     return { tag_name, name, prerelease, draft, published_at, html_url, body, assets };
   }
 
+  // The list the Pages workflow publishes with the site every 15 minutes. Older than this means
+  // the workflow has stopped, so the page asks GitHub itself.
+  const PUBLISHED_FRESH_MS = 6 * 60 * 60 * 1000;
+
+  function loadPublished(source) {
+    return fetch(`data/releases/${source.id}.json`, { cache: "no-cache" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => (data && Array.isArray(data.releases) ? data : null))
+      .catch(() => null);
+  }
+
   // A repository that isn't public yet (or has no releases) answers 404: no versions, not an error
-  function load(source) {
-    const cached = readCache(source);
-    const use = (releases) => {
-      source.releases = releases.filter((r) => !r.draft);
-      source.failed = false;
-    };
-    if (cached && Date.now() - cached.at < CACHE_FRESH_MS) {
-      use(cached.releases);
-      return Promise.resolve();
-    }
+  function loadFromApi(source) {
     return fetch(`https://api.github.com/repos/${source.repo}/releases?per_page=100`, { headers: { Accept: "application/vnd.github+json" } })
       .then((res) => {
         if (res.status === 404) return [];
@@ -401,14 +403,32 @@
       .then((releases) => {
         const kept = releases.map(slim);
         writeCache(source, kept);
-        use(kept);
-      })
-      .catch((err) => {
-        console.error(err);
-        if (cached) return use(cached.releases);
-        source.releases = [];
-        source.failed = true;
+        return kept;
       });
+  }
+
+  // Newest first: the published list, then the GitHub API (reused for 5 minutes), and when both
+  // fall through, whatever older list there is
+  async function load(source) {
+    const use = (releases) => {
+      source.releases = releases.filter((r) => !r.draft);
+      source.failed = false;
+    };
+    const published = await loadPublished(source);
+    if (published && Date.now() - Date.parse(published.generated_at) < PUBLISHED_FRESH_MS) {
+      return use(published.releases);
+    }
+    const cached = readCache(source);
+    if (cached && Date.now() - cached.at < CACHE_FRESH_MS) return use(cached.releases);
+    try {
+      return use(await loadFromApi(source));
+    } catch (err) {
+      console.error(err);
+      const fallback = published ? published.releases : cached && cached.releases;
+      if (fallback) return use(fallback);
+      source.releases = [];
+      source.failed = true;
+    }
   }
 
   if (!homeList && !latestSlot && !allList) return;

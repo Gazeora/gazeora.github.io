@@ -3,8 +3,12 @@
 The website for [Gazeora](https://github.com/Gazeora/Gazeora), served by GitHub Pages at
 <https://gazeora.github.io>.
 
-Plain HTML, CSS and JavaScript, with no build step. The pages read the releases from the GitHub
-API when they load, so a published release appears here by itself:
+Plain HTML, CSS and JavaScript, with no build step. The Pages workflow
+(`.github/workflows/pages.yml`) publishes the site with both repositories' release lists in
+`data/releases/`, refreshed every 15 minutes and on every push, so a published release appears
+here by itself and visitors never call the GitHub API, which allows each network only 60
+requests an hour. If a list is missing or more than 6 hours old, the page asks the API itself.
+The releases come from:
 
 - Windows: [Gazeora/Gazeora](https://github.com/Gazeora/Gazeora/releases), its `-x64.msi` and
   `-x86.msi` files.
@@ -30,6 +34,8 @@ To preview locally:
 ```sh
 python -m http.server 8000
 ```
+
+Locally there's no `data/releases/`, so the page reads the releases from the GitHub API.
 
 Colors follow the launcher's theme (`apps/gazeora/src/ui/theme.h` in the Gazeora repository).
 The logo and icon are copied from `apps/gazeora/resources`.
