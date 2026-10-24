@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gazeora</title>
+  <meta name="description" content="Gazeora streams your Windows PC games live to your phone, flat or as a VR screen, with 3D from depth and hand gestures. Free and open source.">
+  <meta name="theme-color" content="#0d0e16">
+  <meta property="og:title" content="Gazeora">
+  <meta property="og:description" content="Turn your phone into a VR screen for your PC games. Free and open source.">
+  <meta property="og:image" content="https://gazeora.github.io/assets/logo.png">
+  <meta property="og:url" content="https://gazeora.github.io/">
+  <link rel="icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" aria-label="Gazeora home">
+        <img src="assets/logo.png" alt="" width="32" height="32">
+        <span>Gazeora</span>
+      </a>
+      <nav class="nav-links" aria-label="Sections">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#releases">Releases</a>
+        <a href="#docs">Docs</a>
+      </nav>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/Gazeora/Gazeora">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span>GitHub</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Free and open source · Windows 10 and 11</p>
+          <h1>Your PC games, on your phone, <span class="grad">in VR.</span></h1>
+          <p class="lede">
+            Gazeora captures a game's frames as it renders them and streams them live to any device
+            on your network. Put your phone in a Cardboard-style viewer and the game floats in front
+            of you, with real depth.
+          </p>
+          <div class="cta">
+            <a class="btn btn-primary" id="hero-download" href="https://github.com/Gazeora/Gazeora/releases">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>
+              <span id="hero-download-label">Download for Windows</span>
+            </a>
+            <a class="btn btn-ghost" href="#features">See what it does</a>
+          </div>
+          <p class="hero-meta" id="hero-meta">MSI installer for 64-bit and 32-bit games.</p>
+        </div>
+
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 548 400" class="scene">
+            <defs>
+              <linearGradient id="g-accent" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#7c5cff"/>
+                <stop offset="1" stop-color="#38bdf8"/>
+              </linearGradient>
+              <radialGradient id="g-sky" cx=".5" cy=".35" r=".8">
+                <stop offset="0" stop-color="#3b2f8f"/>
+                <stop offset=".6" stop-color="#16183a"/>
+                <stop offset="1" stop-color="#0b0c16"/>
+              </radialGradient>
+              <clipPath id="eye-l"><ellipse cx="358" cy="292" rx="52" ry="56"/></clipPath>
+              <clipPath id="eye-r"><ellipse cx="462" cy="292" rx="52" ry="56"/></clipPath>
+              <g id="game">
+                <rect x="-70" y="-70" width="140" height="140" fill="url(#g-sky)"/>
+                <circle cx="22" cy="-24" r="12" fill="#f9d77e" opacity=".9"/>
+                <path d="M-70 30 L-30 -8 L0 18 L30 -14 L70 26 L70 70 L-70 70Z" fill="#251f5c"/>
+                <path d="M-70 44 L-20 16 L20 40 L70 20 L70 70 L-70 70Z" fill="#3a2d86"/>
+                <path d="M-8 52 l8 -22 l8 22 z" fill="#38bdf8"/>
+              </g>
+            </defs>
+
+            <!-- PC monitor -->
+            <g class="monitor">
+              <rect x="24" y="40" width="250" height="160" rx="12" fill="#1b1e2c" stroke="#343950"/>
+              <rect x="36" y="52" width="226" height="136" rx="6" fill="url(#g-sky)"/>
+              <circle cx="190" cy="88" r="14" fill="#f9d77e" opacity=".9"/>
+              <path d="M36 160 L90 112 L130 146 L180 104 L262 150 L262 188 L36 188Z" fill="#251f5c"/>
+              <path d="M36 172 L110 136 L160 164 L262 132 L262 188 L36 188Z" fill="#3a2d86"/>
+              <path d="M140 182 l10 -28 l10 28 z" fill="#38bdf8"/>
+              <rect x="130" y="200" width="38" height="26" fill="#1b1e2c"/>
+              <rect x="96" y="226" width="106" height="10" rx="5" fill="#2a2e42"/>
+            </g>
+
+            <!-- Stream path -->
+            <path class="beam" d="M276 128 C 360 128, 400 150, 410 226" fill="none" stroke="url(#g-accent)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 12"/>
+            <g class="packets">
+              <circle r="5" fill="#38bdf8"><animateMotion dur="1.6s" repeatCount="indefinite" path="M276 128 C 360 128, 400 150, 410 226"/></circle>
+              <circle r="5" fill="#7c5cff"><animateMotion dur="1.6s" begin=".53s" repeatCount="indefinite" path="M276 128 C 360 128, 400 150, 410 226"/></circle>
+              <circle r="5" fill="#a78bfa"><animateMotion dur="1.6s" begin="1.06s" repeatCount="indefinite" path="M276 128 C 360 128, 400 150, 410 226"/></circle>
+            </g>
+
+            <!-- Phone in landscape, VR split -->
+            <g class="phone">
+              <rect x="290" y="226" width="240" height="132" rx="20" fill="#0d0e16" stroke="url(#g-accent)" stroke-width="2.5"/>
+              <rect x="302" y="236" width="216" height="112" rx="10" fill="#05060b"/>
+              <g clip-path="url(#eye-l)"><use href="#game" transform="translate(358 292) scale(.82)"/></g>
+              <g clip-path="url(#eye-r)"><use href="#game" transform="translate(462 292) scale(.82)"/></g>
+              <ellipse cx="358" cy="292" rx="52" ry="56" fill="none" stroke="#7c5cff" stroke-opacity=".5"/>
+              <ellipse cx="462" cy="292" rx="52" ry="56" fill="none" stroke="#38bdf8" stroke-opacity=".5"/>
+              <line x1="410" y1="240" x2="410" y2="344" stroke="#1b1e2c" stroke-width="2"/>
+            </g>
+
+            <text x="40" y="270" class="scene-label">Game on your PC</text>
+            <text x="290" y="384" class="scene-label">Phone in a VR viewer</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="wrap">
+        <dl class="stats">
+          <div><dt>4–25 ms</dt><dd>capture to arrival on your LAN</dd></div>
+          <div><dt>D3D 8–12 + OpenGL</dt><dd>graphics APIs captured</dd></div>
+          <div><dt>H.264 / H.265</dt><dd>on the GPU's own encoder</dd></div>
+          <div><dt>60 fps</dt><dd>steady, or 30 if you prefer</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow">Features</p>
+          <h2>Everything between your game and your eyes</h2>
+          <p>Gazeora is a game launcher, a capture engine and a stream server in one window.</p>
+        </header>
+
+        <div class="features">
+          <article class="feature feature-wide">
+            <div class="icon"><svg viewBox="0 0 24 24"><circle cx="7" cy="12" r="4"/><circle cx="17" cy="12" r="4"/><path d="M11 12h2"/></svg></div>
+            <h3>VR viewer mode</h3>
+            <p>Each eye gets its own picture with barrel pre-distortion and color-fringe correction for your viewer's lenses. Tune distortion, size and lens separation with the headset on; changes show at once. On by default.</p>
+          </article>
+          <article class="feature feature-wide">
+            <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 12l9 4 9-4"/><path d="M3 17l9 4 9-4"/></svg></div>
+            <h3>3D from depth</h3>
+            <p>In Direct3D 11 and 12 games, the hook copies the game's depth buffer and Gazeora renders a separate view for each eye from it, so the scene has real depth in the viewer, not just two copies of a flat image.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg></div>
+            <h3>Low latency</h3>
+            <p>Frames stay on the GPU from capture to encoder. Packets go out on their own thread while the next frame encodes, and nothing queues up behind a slow one.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg></div>
+            <h3>Hardware encoding</h3>
+            <p>H.264 or H.265 on the GPU's encoder (NVIDIA NVENC, AMD AMF or Intel Quick Sync). H.265 gives the same picture at 70% of the bits, so Wi-Fi has fewer packets to lose.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
+            <h3>Frame capture</h3>
+            <p>A small hook DLL copies each presented frame as a shared GPU texture. Works with Direct3D 8, 9, 10, 11, 12 and OpenGL games.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><path d="M2 9a15 15 0 0120 0"/><path d="M5 12.5a10 10 0 0114 0"/><path d="M8.5 16a5 5 0 017 0"/><circle cx="12" cy="19.5" r="1"/></svg></div>
+            <h3>Built for Wi-Fi</h3>
+            <p>Frames are cut into small slices and packets are paced, not burst. A lost packet smears a strip briefly instead of freezing the picture, and the bitrate adapts to loss.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 00-4 0v5"/><path d="M14 10V4a2 2 0 00-4 0v6"/><path d="M10 10.5V6a2 2 0 00-4 0v8"/><path d="M18 8a2 2 0 014 0v6a8 8 0 01-8 8h-2c-2.8 0-4.5-.9-6-2.4L2.4 16a2 2 0 013-2.6L7 15"/></svg></div>
+            <h3>Hand gestures</h3>
+            <p>A webcam turns your hands into a touch screen in the air: point to move, fold a finger to click, pinch to scroll. MediaPipe hand models run on the CPU.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
+            <h3>Touch from your phone</h3>
+            <p>With VR mode off, taps on the picture click the Gazeora window and swipes scroll it, without moving the PC's own mouse or touching other programs.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div>
+            <h3>Found automatically</h3>
+            <p>The Gazeora Android app finds your PC on the network by itself, so nobody types an address. Or plug in a USB cable instead.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>
+            <h3>Plays in VLC, ffplay, OBS</h3>
+            <p>Standard RTSP and MPEG-TS over HTTP, so any player on any device opens the stream without extra software.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+            <h3>Game library</h3>
+            <p>Add games by exe or shortcut, launch them directly or through Steam, and track play time. Follows games that restart through Steam, Ubisoft Connect or the EA app.</p>
+          </article>
+          <article class="feature">
+            <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 17l6-5-6-5"/><path d="M12 19h8"/></svg></div>
+            <h3>Command line</h3>
+            <p><code>GazeoraCLI</code> manages the same library and can attach to a game that is already running.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="section section-alt">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow">How it works</p>
+          <h2>From the game's GPU to your screen, without a detour</h2>
+        </header>
+
+        <ol class="steps">
+          <li>
+            <span class="step-n">1</span>
+            <h3>Launch</h3>
+            <p>Gazeora starts the game suspended, or attaches to it if it's already running, and injects <code>gazeora_hook.dll</code>.</p>
+          </li>
+          <li>
+            <span class="step-n">2</span>
+            <h3>Capture</h3>
+            <p>The hook finds the graphics API, hooks its present call and copies each frame into a ring of shared textures. GPU fences order the copies without stalling the game.</p>
+          </li>
+          <li>
+            <span class="step-n">3</span>
+            <h3>Prepare</h3>
+            <p>The launcher scales the frame on the GPU, applies the VR layout and converts it to NV12, all without leaving video memory.</p>
+          </li>
+          <li>
+            <span class="step-n">4</span>
+            <h3>Stream</h3>
+            <p>The GPU's encoder (NVENC, AMF or Quick Sync) encodes H.264 or H.265 straight from the texture, and packets go out to everyone watching.</p>
+          </li>
+        </ol>
+
+        <div class="protocols">
+          <h3>Five ways to watch</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr><th>Protocol</th><th>Address</th><th>Players</th><th>Best for</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>RTSP over TCP <span class="tag">default</span></td><td><code>rtsp://PC:8554/</code></td><td>Android app, VLC, ffplay, OBS</td><td>Nothing lost; a slow link skips frames</td></tr>
+                <tr><td>RTSP over UDP</td><td><code>rtsp://PC:8554/</code></td><td>Android app, VLC, ffplay, OBS</td><td>The lowest delay on a good network</td></tr>
+                <tr><td>UDP</td><td><code>udp://PC:8554</code></td><td>Android app</td><td>Bare frames, works through NAT</td></tr>
+                <tr><td>HTTP</td><td><code>http://PC:8554/stream.ts</code></td><td>Android app, VLC, ffplay</td><td>A live MPEG-TS stream</td></tr>
+                <tr><td>USB</td><td>the cable</td><td>Android app</td><td>No Wi-Fi at all</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="releases" class="section">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow">Releases</p>
+          <h2>Download Gazeora</h2>
+          <p>
+            Two installers per release. <strong>x64</strong> captures 64-bit games;
+            <strong>x86</strong> captures 32-bit ones, including every Direct3D 8 game and many older
+            Direct3D 9 and OpenGL titles. Install the one that matches your game.
+          </p>
+        </header>
+
+        <div id="release-list" class="release-list" aria-live="polite">
+          <div class="release-loading">Loading releases…</div>
+        </div>
+
+        <p class="release-foot">
+          All releases, source archives and checksums are on
+          <a href="https://github.com/Gazeora/Gazeora/releases">GitHub Releases</a>.
+        </p>
+      </div>
+    </section>
+
+    <section id="docs" class="section section-alt">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow">Documentation</p>
+          <h2>Guides</h2>
+        </header>
+        <div class="docs">
+          <a class="doc" href="https://github.com/Gazeora/Gazeora/blob/master/docs/streaming.md"><h3>Streaming</h3><p>Watching the stream, protocols, USB setup, codecs, Wi-Fi.</p></a>
+          <a class="doc" href="https://github.com/Gazeora/Gazeora/blob/master/docs/vr-viewer.md"><h3>VR viewer mode</h3><p>Lens correction and 3D from depth.</p></a>
+          <a class="doc" href="https://github.com/Gazeora/Gazeora/blob/master/docs/hand-gestures.md"><h3>Hand gestures</h3><p>Controlling the pointer with a webcam.</p></a>
+          <a class="doc" href="https://github.com/Gazeora/Gazeora/blob/master/docs/installer.md"><h3>Installer</h3><p>MSI features, uninstalling, silent installs.</p></a>
+          <a class="doc" href="https://github.com/Gazeora/Gazeora/blob/master/docs/command-line.md"><h3>Command line</h3><p><code>GazeoraCLI</code> commands.</p></a>
+          <a class="doc" href="https://github.com/Gazeora/Gazeora/blob/master/docs/configuration.md"><h3>Configuration</h3><p>What Gazeora stores and where.</p></a>
+          <a class="doc" href="https://github.com/Gazeora/Gazeora/blob/master/docs/stream-format.md"><h3>Stream format</h3><p>The wire formats of every protocol.</p></a>
+          <a class="doc" href="https://github.com/Gazeora/Gazeora/blob/master/docs/development.md"><h3>Development</h3><p>Building, testing, benchmarks, contributing.</p></a>
+        </div>
+
+        <div class="notes">
+          <div class="note">
+            <h3>Good to know</h3>
+            <ul>
+              <li>Games with kernel-level anti-cheat may block capture. Don't use it with online games whose terms forbid it.</li>
+              <li>The stream is unencrypted: anyone on your local network can watch it.</li>
+              <li>Vulkan games aren't supported yet.</li>
+              <li>Windows N editions need the Media Feature Pack for H.264.</li>
+            </ul>
+          </div>
+          <div class="note">
+            <h3>Get involved</h3>
+            <p>Bug reports, game compatibility reports and pull requests are welcome.</p>
+            <p>
+              <a href="https://github.com/Gazeora/Gazeora/issues/new/choose">Report an issue</a> ·
+              <a href="https://github.com/Gazeora/Gazeora/blob/master/CONTRIBUTING.md">Contributing guide</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div class="brand">
+        <img src="assets/logo.png" alt="" width="28" height="28">
+        <span>Gazeora</span>
+      </div>
+      <p>
+        Copyright © 2026 Nithin Aashik. Gazeora is free software under the
+        <a href="https://github.com/Gazeora/Gazeora/blob/master/LICENSE">GNU GPL v3</a>.
+        The Gazeora name and logo are not covered by that license; see
+        <a href="https://github.com/Gazeora/Gazeora/blob/master/TRADEMARKS.md">Name and logo</a>.
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+  <script src="assets/site.js"></script>
+</body>
+</html>
