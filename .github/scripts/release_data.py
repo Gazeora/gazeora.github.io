@@ -88,6 +88,10 @@ class ReleaseList:
         for page in sorted(self.folder.glob("page-*.json")):
             for release in json.loads(page.read_text(encoding="utf-8"))["releases"]:
                 self.releases[release["tag_name"]] = release
+        self.saved = self._snapshot()
+
+    def _snapshot(self):
+        return json.dumps(self.releases, sort_keys=True)
 
     def upsert(self, release):
         release = clean(release, self.repo)
@@ -103,6 +107,10 @@ class ReleaseList:
                 self.upsert(release)
 
     def save(self):
+        """Rewrites the files, unless nothing changed (so a no-op edit makes no commit)."""
+        if self._snapshot() == self.saved and (self.folder / "index.json").exists():
+            print(f"{self.platform}: no change")
+            return
         ordered = sorted(self.releases.values(), key=lambda r: r["published_at"], reverse=True)
         pages = [ordered[i:i + PAGE_SIZE] for i in range(0, len(ordered), PAGE_SIZE)]
         self.folder.mkdir(parents=True, exist_ok=True)
