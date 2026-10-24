@@ -10,14 +10,21 @@
   const homeList = document.getElementById("release-list");
   const latestSlot = document.getElementById("latest");
   const allList = document.getElementById("all-releases");
-  const heroLink = document.getElementById("hero-download");
-  const heroLabel = document.getElementById("hero-download-label");
+  const heroDownloads = document.getElementById("hero-downloads");
   const heroMeta = document.getElementById("hero-meta");
 
-  const ARCHES = [
-    { suffix: "-x64.msi", arch: "x64", label: "Windows x64", note: "64-bit games" },
-    { suffix: "-x86.msi", arch: "x86", label: "Windows x86", note: "32-bit games" },
+  // What each download button looks for among a release's files. The APK is attached to the
+  // same release as the MSIs.
+  const PLATFORMS = [
+    { suffix: "-x64.msi", label: "Windows x64", note: "64-bit games", kind: "Installer · x64", icon: "pc" },
+    { suffix: "-x86.msi", label: "Windows x86", note: "32-bit games", kind: "Installer · x86", icon: "pc" },
+    { suffix: ".apk", label: "Android", note: "Android 10+", kind: "Android app", icon: "phone" },
   ];
+
+  const ICONS = {
+    pc: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+    phone: '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>',
+  };
 
   function el(tag, attrs, children) {
     const node = document.createElement(tag);
@@ -37,9 +44,9 @@
     return bytes >= 1048576 ? `${(bytes / 1048576).toFixed(1)} MB` : `${Math.round(bytes / 1024)} KB`;
   }
 
-  function archOf(asset) {
+  function platformOf(asset) {
     const name = asset.name.toLowerCase();
-    return ARCHES.find((a) => name.endsWith(a.suffix));
+    return PLATFORMS.find((p) => name.endsWith(p.suffix));
   }
 
   function title(release) {
@@ -70,26 +77,36 @@
     return el("time", { class: "release-date", datetime: release.published_at, text: formatDate(release.published_at) });
   }
 
-  function installerButtons(release, primary) {
-    const row = el("div", { class: "downloads" });
-    for (const arch of ARCHES) {
-      const asset = release.assets.find((a) => archOf(a) === arch);
-      if (!asset) continue;
-      row.append(el("a", { class: `btn ${primary ? "btn-primary" : "btn-ghost"} download`, href: asset.browser_download_url }, [
-        `${arch.label} `,
-        el("small", { text: `· ${arch.note} · ${formatSize(asset.size)}` }),
-      ]));
-    }
-    if (row.childElementCount === 0) {
-      row.append(el("a", { class: "btn btn-ghost", href: release.html_url, text: "View on GitHub" }));
-    }
+  function icon(name) {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("aria-hidden", "true");
+    svg.innerHTML = ICONS[name];
+    return svg;
+  }
+
+  // One button per platform, Windows x64 first and filled. A platform the release has no file
+  // for (or every platform, before the first release) shows as "Coming soon".
+  function platformButtons(release, className, compact) {
+    const row = el("div", { class: className });
+    PLATFORMS.forEach((platform, i) => {
+      const asset = release && release.assets.find((a) => platformOf(a) === platform);
+      const style = i === 0 && asset ? "btn-primary" : "btn-ghost";
+      const label = el("span", { class: "download-text" }, [
+        el("strong", { text: platform.label }),
+        el("small", { text: !asset ? "Coming soon" : compact ? platform.note : `${platform.note} · ${formatSize(asset.size)}` }),
+      ]);
+      row.append(asset
+        ? el("a", { class: `btn ${style} download`, href: asset.browser_download_url }, [icon(platform.icon), label])
+        : el("span", { class: "btn btn-ghost download is-disabled", "aria-disabled": "true" }, [icon(platform.icon), label]));
+    });
     return row;
   }
 
   function latestCard(release, isLatest) {
     return el("article", { class: "release latest" }, [
       el("div", { class: "release-head" }, [el("h3", { text: title(release) }), ...badges(release, isLatest), dateOf(release)]),
-      installerButtons(release, true),
+      platformButtons(release, "downloads"),
       renderNotes(release.body),
     ]);
   }
@@ -108,8 +125,8 @@
   // One row per file: attached assets first, then the source archives GitHub makes for every tag
   function fileTable(release) {
     const rows = release.assets.map((asset) => {
-      const arch = archOf(asset);
-      const kind = arch ? `Installer · ${arch.arch}` : asset.name.split(".").pop().toUpperCase();
+      const platform = platformOf(asset);
+      const kind = platform ? platform.kind : asset.name.split(".").pop().toUpperCase();
       const sha = asset.digest && asset.digest.startsWith("sha256:") ? asset.digest.slice(7) : "";
       return el("div", { class: "file" }, [
         el("a", { class: "file-name", href: asset.browser_download_url, text: asset.name }),
@@ -151,37 +168,26 @@
     return card;
   }
 
-  function emptyState(heading, text, link, linkText) {
-    return el("div", { class: "release-empty" }, [
-      el("h3", { text: heading }),
-      el("p", { text }),
-      el("a", { class: "btn btn-ghost", href: link, text: linkText }),
-    ]);
-  }
-
   function showEmpty() {
-    const empty = () => emptyState(
-      "The first release is on its way",
-      "Watch the repository on GitHub to hear when it's out, or build Gazeora from source today.",
-      `https://github.com/${REPO}#building`,
-      "Build from source"
-    );
+    const empty = () => el("div", { class: "release-empty" }, [
+      el("h3", { text: "The first release is on its way" }),
+      el("p", { text: "The downloads appear here as soon as it's out." }),
+      platformButtons(null, "downloads downloads-center"),
+    ]);
     for (const slot of [homeList, latestSlot]) slot && slot.replaceChildren(empty());
     if (allList) allList.replaceChildren(el("div", { class: "release-loading", text: "No versions yet." }));
-    if (heroLink) {
-      heroLabel.textContent = "Get Gazeora";
-      heroLink.href = "download.html";
-      heroMeta.textContent = "Releases are coming soon. Build from source on GitHub today.";
+    if (heroDownloads) {
+      heroDownloads.replaceChildren(...platformButtons(null, "cta", true).children);
+      heroMeta.textContent = "The first release is coming soon.";
     }
   }
 
   function showError() {
-    const error = () => emptyState(
-      "Couldn't load the releases",
-      "GitHub didn't answer just now. They're all on the releases page.",
-      RELEASES_PAGE,
-      "Open GitHub Releases"
-    );
+    const error = () => el("div", { class: "release-empty" }, [
+      el("h3", { text: "Couldn't load the releases" }),
+      el("p", { text: "GitHub didn't answer just now. They're all on the releases page." }),
+      el("a", { class: "btn btn-ghost", href: RELEASES_PAGE, text: "Open GitHub Releases" }),
+    ]);
     for (const slot of [homeList, latestSlot, allList]) slot && slot.replaceChildren(error());
   }
 
@@ -214,14 +220,11 @@
       if (target) target.scrollIntoView();
     }
 
-    if (heroLink) {
-      const x64 = latest.assets.find((a) => archOf(a) === ARCHES[0]);
-      heroLink.href = x64 ? x64.browser_download_url : "download.html";
-      heroLabel.textContent = `Download ${latest.tag_name} for Windows`;
+    if (heroDownloads) {
+      heroDownloads.replaceChildren(...platformButtons(latest, "cta", true).children);
       heroMeta.replaceChildren(
-        `x64 installer, released ${formatDate(latest.published_at)}. `,
-        el("a", { href: "download.html", text: "32-bit and older versions" }),
-        "."
+        `${latest.tag_name}, released ${formatDate(latest.published_at)}. `,
+        el("a", { href: "download.html", text: "All versions" })
       );
     }
   }

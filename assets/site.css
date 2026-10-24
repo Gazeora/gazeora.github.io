@@ -43,7 +43,12 @@ code {
   border: 1px solid var(--border);
   padding: .1em .4em;
   border-radius: 6px;
+  font-variant-ligatures: none;  /* the font draws -< and >- as arrows */
+  white-space: nowrap;
 }
+pre code { white-space: pre; }
+
+.nowrap { white-space: nowrap; }
 
 h1, h2, h3 { line-height: 1.15; margin: 0; letter-spacing: -.02em; }
 
@@ -241,7 +246,6 @@ td:last-child { color: var(--text-dim); }
 .badge-pre { background: rgba(250, 190, 70, .15); color: #fabe46; }
 
 .downloads { display: flex; flex-wrap: wrap; gap: 10px; padding: 20px 24px 0; }
-.download small { font-weight: 500; opacity: .75; }
 .release-body { padding: 8px 24px 24px; color: var(--text-dim); font-size: 15px; }
 .release-body h1, .release-body h2, .release-body h3 { color: var(--text); font-size: 17px; margin: 20px 0 8px; }
 .release-body ul { padding-left: 20px; }
@@ -303,13 +307,13 @@ details.release .release-date { margin-left: auto; }
 .pick-card { padding: 24px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); }
 .pick-card h3 { font-size: 18px; margin: 14px 0 8px; }
 .pick-card p { margin: 0; color: var(--text-dim); font-size: 15px; }
-.pick-hint { background: var(--inset); border-style: dashed; }
-.pick-hint h3 { margin-top: 0; }
+.pick-hint { margin: 20px 0 0; color: var(--text-dim); font-size: 15px; }
 .arch {
   display: inline-block; padding: 4px 12px; border-radius: 8px;
   font: 600 14px var(--mono); color: #fff; background: var(--accent);
 }
 .arch-alt { background: #0e7fb0; }
+.arch-android { background: #15803d; }
 
 .section-head-row { max-width: none; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px; }
 .section-head-row > div { max-width: 640px; }
@@ -349,9 +353,18 @@ details.release .release-date { margin-left: auto; }
 .notes-toggle > summary:hover { color: var(--text); }
 .notes-toggle .release-body { padding-top: 0; }
 
-.notes-3 { grid-template-columns: repeat(3, 1fr); margin-top: 0; }
-.note pre { margin: 0 0 12px; overflow-x: auto; }
-.note pre code { display: block; padding: 10px 12px; font-size: 13px; }
+.notes-2 { grid-template-columns: repeat(2, 1fr); margin-top: 0; }
+.note pre { margin: 0 0 12px; }
+.note pre code { display: block; padding: 10px 12px; font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* Platform download buttons */
+.download { padding-block: 10px; text-align: left; }
+.download svg { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.download-text { display: flex; flex-direction: column; line-height: 1.25; }
+.download-text small { font-size: 12px; font-weight: 500; opacity: .75; }
+.download.is-disabled { opacity: .5; cursor: default; }
+.download.is-disabled:hover { transform: none; background: var(--card); }
+.downloads-center { justify-content: center; padding: 0; }
 
 /* Responsive */
 @media (max-width: 960px) {
@@ -361,7 +374,7 @@ details.release .release-date { margin-left: auto; }
   .steps { grid-template-columns: repeat(2, 1fr); }
   .docs { grid-template-columns: repeat(2, 1fr); }
   .stats { grid-template-columns: repeat(2, 1fr); }
-  .pick, .notes-3 { grid-template-columns: 1fr; }
+  .pick, .notes-2 { grid-template-columns: 1fr; }
   .file { grid-template-columns: minmax(0, 1fr) auto auto; }
   .file-name { grid-column: 1 / -1; }
   .file-sha { justify-content: flex-start; }
@@ -380,6 +393,7 @@ details.release .release-date { margin-left: auto; }
   .file { padding: 12px 16px; grid-template-columns: auto auto; justify-content: start; column-gap: 16px; }
   .file-sha { grid-column: 1 / -1; }
   .file > span:empty { display: none; }
+  .downloads .download, .cta .download { flex: 1 1 100%; }
   .release-head, .downloads { padding-left: 16px; padding-right: 16px; }
   .notes-toggle > summary, .release-body { padding-left: 16px; padding-right: 16px; }
   .footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }

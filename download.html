@@ -41,10 +41,10 @@
     <section class="hero hero-sm">
       <div class="wrap">
         <p class="eyebrow">Download</p>
-        <h1>Get <span class="grad">Gazeora</span> for Windows</h1>
+        <h1>Get <span class="grad">Gazeora</span></h1>
         <p class="lede">
-          Free and open source, for Windows 10 and 11. Pick the installer that matches your game,
-          or install both: they sit side by side as "Gazeora" and "Gazeora (32-bit)".
+          Free and open source. Install Gazeora on your Windows 10 or 11 PC, then get the app on
+          your Android phone to watch your games on it.
         </p>
         <div id="latest" class="release-list" aria-live="polite">
           <div class="release-loading">Loading the latest release…</div>
@@ -58,18 +58,20 @@
           <article class="pick-card">
             <span class="arch">x64</span>
             <h3>For 64-bit games</h3>
-            <p>Most games from the last decade. Needs 64-bit Windows. Installs to <code>Program Files\Gazeora</code>.</p>
+            <p>Most games from the last decade. Needs 64-bit Windows. Installs to <code>Program&nbsp;Files\Gazeora</code>.</p>
           </article>
           <article class="pick-card">
             <span class="arch arch-alt">x86</span>
             <h3>For 32-bit games</h3>
-            <p>Every Direct3D 8 game and many older Direct3D 9 and OpenGL ones. Installs to <code>Program Files (x86)\Gazeora</code>.</p>
+            <p>Every Direct3D 8 game and many older Direct3D 9 and OpenGL ones. Installs to <code>Program&nbsp;Files&nbsp;(x86)\Gazeora</code>.</p>
           </article>
-          <article class="pick-card pick-hint">
-            <h3>Not sure?</h3>
-            <p>Start with x64. When you launch a game the other installer captures, Gazeora tells you so.</p>
+          <article class="pick-card">
+            <span class="arch arch-android">APK</span>
+            <h3>For your phone</h3>
+            <p>The Gazeora viewer for Android 10 and newer. It finds your PC by itself and plays the stream flat or in a VR viewer.</p>
           </article>
         </div>
+        <p class="pick-hint">Not sure which Windows installer? Start with x64. When you launch a game the other one captures, Gazeora tells you so. The two install side by side.</p>
       </div>
     </section>
 
@@ -106,7 +108,7 @@
           <p class="eyebrow">Installing</p>
           <h2>After you download</h2>
         </header>
-        <div class="notes notes-3">
+        <div class="notes notes-2">
           <div class="note">
             <h3>Let the stream through</h3>
             <p>The installer adds a Windows Firewall rule for <strong>private</strong> networks. If Windows calls your network public, devices can't connect until you make it private in Windows' network settings.</p>
@@ -116,8 +118,12 @@
             <p>Run a newer MSI over the old one. Your game library, settings and USB driver stay. Uninstalling from <strong>Settings → Apps</strong> asks whether to delete your library and settings.</p>
           </div>
           <div class="note">
+            <h3>On your phone</h3>
+            <p>Open the APK on the phone. If Android asks, allow your browser or file manager to install apps, then open Gazeora on the same Wi-Fi as your PC.</p>
+          </div>
+          <div class="note">
             <h3>Silent installs</h3>
-            <pre><code>msiexec /i Gazeora-&lt;version&gt;-x64.msi /qn</code></pre>
+            <pre><code>msiexec /i Gazeora-1.0.0-x64.msi /qn</code></pre>
             <p>Features, properties and uninstalling: <a href="https://github.com/Gazeora/Gazeora/blob/master/docs/installer.md#silent-installs">Installer guide</a>.</p>
           </div>
         </div>
