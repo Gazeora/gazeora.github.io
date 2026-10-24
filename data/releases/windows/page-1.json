@@ -1,0 +1,28 @@
+{
+ "page": 1,
+ "pages": 1,
+ "releases": [
+  {
+   "tag_name": "v1.0.0-rc.1",
+   "name": "Gazeora v1.0.0-rc.1",
+   "prerelease": true,
+   "published_at": "2026-10-24T10:40:22Z",
+   "html_url": "https://github.com/Gazeora/Gazeora/releases/tag/v1.0.0-rc.1",
+   "body": "The first release candidate of Gazeora v1.0.0: a game launcher for Windows that captures your game as it renders and streams it live to your phone or any device on your network, flat or as a VR screen.\n\nThis is a pre-release. Please try it with your games and [report what you find](https://github.com/Gazeora/Gazeora/issues/new/choose) before v1.0.0.\n\n## Downloads\n\n| File | For |\n|---|---|\n| `Gazeora-v1.0.0-rc.1-x64.msi` | 64-bit games (most games from the last decade) |\n| `Gazeora-v1.0.0-rc.1-x86.msi` | 32-bit games, including every Direct3D 8 game and many older Direct3D 9 and OpenGL ones |\n\nThe two install side by side. Windows 10 or 11. v1.0.0 will install over this version, keeping your library and settings.\n\n## What's in it\n\n- **Frame capture** from Direct3D 8, 9, 10, 11, 12 and OpenGL games, kept on the GPU from capture to encoder.\n- **Live streaming** over RTSP (TCP or UDP), MPEG-TS over HTTP, UDP or USB, in H.264 or H.265 on the GPU's encoder (NVENC, AMF or Quick Sync), at a steady 60 fps.\n- **VR viewer mode** with lens correction for Cardboard-style viewers, and **3D from depth** in Direct3D 11 and 12 games.\n- **Hand gestures** from a webcam, and **touch from the phone** to control the launcher.\n- **Game library** with Steam launching, play time and **Open with Gazeora** in Explorer.\n- **MSI installer** with a firewall rule for private networks, an optional desktop shortcut and `GazeoraCLI` on PATH.\n\nSee the [guides](https://gazeora.github.io/docs.html) to get started.\n",
+   "assets": [
+    {
+     "name": "Gazeora-v1.0.0-rc.1-x64.msi",
+     "size": 10166272,
+     "browser_download_url": "https://github.com/Gazeora/Gazeora/releases/download/v1.0.0-rc.1/Gazeora-v1.0.0-rc.1-x64.msi",
+     "digest": "sha256:520e008f81cb80f9033458068300393b41013ece3f22d0d6c153aa691da8131b"
+    },
+    {
+     "name": "Gazeora-v1.0.0-rc.1-x86.msi",
+     "size": 9445376,
+     "browser_download_url": "https://github.com/Gazeora/Gazeora/releases/download/v1.0.0-rc.1/Gazeora-v1.0.0-rc.1-x86.msi",
+     "digest": "sha256:bfb8228980e14416356e5d4269b5ade2a407cd9a62d8239a81816d0c40a86d23"
+    }
+   ]
+  }
+ ]
+}

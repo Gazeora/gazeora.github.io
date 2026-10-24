@@ -1,62 +1,81 @@
-# Publishes the site with the Gazeora release lists baked in as data/releases/*.json, so
-# visitors read them from the site instead of the GitHub API, which allows each visitor's
-# network only 60 requests an hour. The lists refresh every 15 minutes and on every push.
+# Publishes the site. A release in Gazeora/Gazeora or Gazeora/Gazeora-Android arrives here as
+# a repository_dispatch event (sent by .github/actions/publish-release), is saved into
+# data/releases/ and committed, and the site is deployed with it. Visitors read those files,
+# never the GitHub API.
 name: Pages
 
 on:
   push:
     branches: [main]
-  schedule:
-    - cron: "*/15 * * * *"
+  repository_dispatch:
+    types: [release]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
+# One at a time, in order, so two releases at once can't overwrite each other's files
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  save-release:
+    name: Save the release
+    if: github.event_name == 'repository_dispatch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update data/releases
+        env:
+          PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: |
+          printf '%s' "$PAYLOAD" > "$RUNNER_TEMP/payload.json"
+          python3 .github/scripts/release_data.py dispatch "$RUNNER_TEMP/payload.json"
+
+      # Pushed with the workflow's own token, which doesn't start this workflow again
+      - name: Commit the release lists
+        env:
+          SOURCE_REPO: ${{ github.event.client_payload.repo }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/releases
+          if git diff --cached --quiet; then
+            echo "Nothing changed"
+            exit 0
+          fi
+          git commit -m "chore: update releases from $SOURCE_REPO"
+          for attempt in 1 2 3; do
+            git pull --rebase --quiet origin main && git push --quiet origin HEAD:main && exit 0
+            sleep 5
+          done
+          exit 1
+
+  deploy:
+    name: Deploy
+    needs: save-release
+    # Runs after a saved release, and on its own for a push or by hand
+    if: ${{ !failure() && !cancelled() }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main  # includes the commit save-release just pushed
 
-      # A repository that isn't public (or has no releases) gives an empty list. On any other
-      # failure the file is left out and the page asks the GitHub API itself.
-      - name: Fetch the release lists
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Gather the site
         run: |
-          mkdir -p site/data/releases
-          cp -r index.html download.html docs.html favicon.ico assets .nojekyll site/
-          fetch() {
-            local id=$1 repo=$2 out=site/data/releases/$1.json raw
-            if raw=$(gh api --paginate "repos/$repo/releases?per_page=100" 2>err.txt); then
-              :
-            elif grep -q "HTTP 404" err.txt; then
-              raw="[]"
-            else
-              echo "::warning::$repo: $(cat err.txt)"
-              return 0
-            fi
-            echo "$raw" | jq -s --arg at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '{
-              generated_at: $at,
-              releases: [add // [] | .[] | select(.draft | not) | {
-                tag_name, name, prerelease, draft, published_at, html_url, body,
-                assets: [.assets[] | {name, size, download_count, browser_download_url, digest}]
-              }]
-            }' > "$out"
-            echo "$repo: $(jq '.releases | length' "$out") releases"
-          }
-          fetch windows Gazeora/Gazeora
-          fetch android Gazeora/Gazeora-Android
+          mkdir site
+          cp -r index.html download.html docs.html favicon.ico .nojekyll assets data site/
 
       - uses: actions/upload-pages-artifact@v3
         with:

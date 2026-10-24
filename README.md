@@ -3,18 +3,33 @@
 The website for [Gazeora](https://github.com/Gazeora/Gazeora), served by GitHub Pages at
 <https://gazeora.github.io>.
 
-Plain HTML, CSS and JavaScript, with no build step. The Pages workflow
-(`.github/workflows/pages.yml`) publishes the site with both repositories' release lists in
-`data/releases/`, refreshed every 15 minutes and on every push, so a published release appears
-here by itself and visitors never call the GitHub API, which allows each network only 60
-requests an hour. If a list is missing or more than 6 hours old, the page asks the API itself.
-The releases come from:
+Plain HTML, CSS and JavaScript, with no build step. Visitors never call the GitHub API: the
+releases come from files in `data/releases/`, which change only when a release does.
 
-- Windows: [Gazeora/Gazeora](https://github.com/Gazeora/Gazeora/releases), its `-x64.msi` and
-  `-x86.msi` files.
-- Android: Gazeora/Gazeora-Android, its `.apk` file. The repository has to be public for this:
-  GitHub hides a private repository's releases from visitors, and the site then shows the
-  Android button as "Coming soon".
+## How releases get here
+
+1. A release is published, edited or deleted in
+   [Gazeora/Gazeora](https://github.com/Gazeora/Gazeora/releases) (Windows) or
+   Gazeora/Gazeora-Android (Android).
+2. That repository's workflow runs the action in this repository,
+   [`.github/actions/publish-release`](.github/actions/publish-release/action.yml). It reads the
+   release back from GitHub, files and all, and sends it here as a `repository_dispatch` event.
+3. The [Pages workflow](.github/workflows/pages.yml) saves it with
+   [`release_data.py`](.github/scripts/release_data.py), commits `data/releases/`, and deploys.
+
+Each platform's folder holds `index.json` (totals, the latest release, and which page holds each
+tag) and `page-1.json`, `page-2.json` and so on, 10 releases each, newest first, so no file grows
+with the number of releases. The download page loads one page at a time.
+
+The source repositories need a secret named `GAZEORA_SITE_TOKEN`: a fine-grained token for the
+Gazeora organization with access to this repository only and **Contents: Read and write**, which
+is what sending a `repository_dispatch` event needs. To fill the lists from scratch (for releases
+made before this was set up):
+
+```sh
+gh api --paginate --slurp "repos/Gazeora/Gazeora/releases?per_page=100" > windows.json
+python .github/scripts/release_data.py import windows windows.json
+```
 
 Each page:
 

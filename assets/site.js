@@ -1,6 +1,7 @@
-// Lists Gazeora's GitHub releases, read live from the GitHub API, so publishing one needs no
-// change here. Windows releases come from Gazeora/Gazeora and Android ones from
-// Gazeora/Gazeora-Android. The home page shows the latest of each; download.html every version.
+// Lists Gazeora's releases: Windows from Gazeora/Gazeora, Android from Gazeora/Gazeora-Android.
+// They come from data/releases/<platform>/, which the Pages workflow updates on every release
+// (see .github/actions/publish-release): index.json with the latest release, and page-N.json
+// with 10 releases each. The home page shows the latest of each; download.html every version.
 (function () {
   "use strict";
 
@@ -73,7 +74,12 @@
 
   // The newest stable release, or the newest of all when there's no stable one yet
   function latestOf(source) {
-    return source.releases.find((r) => !r.prerelease) || source.releases[0] || null;
+    return source.index ? source.index.latest : null;
+  }
+
+  function isLatestStable(source, release) {
+    const latest = latestOf(source);
+    return !release.prerelease && !!latest && latest.tag_name === release.tag_name;
   }
 
   // The release notes are Markdown written on GitHub; sanitized because they become HTML here.
@@ -214,7 +220,6 @@
         el("a", { class: "file-name", href: asset.browser_download_url, text: asset.name }),
         el("span", { class: "file-kind", text: kind }),
         el("span", { class: "file-size", text: formatSize(asset.size) }),
-        el("span", { class: "file-count", text: `${asset.download_count.toLocaleString()} downloads` }),
         sha
           ? el("span", { class: "file-sha" }, [el("code", { title: sha, text: `${sha.slice(0, 12)}…` }), copyButton(sha)])
           : el("span", { class: "file-sha" }),
@@ -226,7 +231,6 @@
         el("a", { class: "file-name", href: `${archive}.${ext}`, text: `Source code (${ext})` }),
         el("span", { class: "file-kind", text: "Source" }),
         el("span", { class: "file-size" }),
-        el("span", { class: "file-count" }),
         el("span", { class: "file-sha" }),
       ]));
     }
@@ -251,19 +255,56 @@
     return card;
   }
 
+  let filter = "all";
+
+  function applyFilter(cards) {
+    cards.forEach((card) => {
+      card.hidden = filter !== "all" && card.dataset.kind !== filter;
+    });
+  }
+
+  function hasMore(source) {
+    return source.loadedPages < source.index.pages;
+  }
+
+  // Older versions come one page at a time, so the page never loads every release at once
+  function moreButton(source, panel) {
+    const button = el("button", { type: "button", class: "btn btn-ghost more", text: "Show older versions" });
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      button.textContent = "Loading…";
+      try {
+        const cards = (await loadNextPage(source)).map((r) => versionCard(source, r, isLatestStable(source, r)));
+        applyFilter(cards);
+        button.before(...cards);
+        if (hasMore(source)) {
+          button.disabled = false;
+          button.textContent = "Show older versions";
+        } else {
+          button.remove();
+        }
+      } catch (err) {
+        console.error(err);
+        button.disabled = false;
+        button.textContent = "Couldn't load them. Try again";
+      }
+    });
+    return button;
+  }
+
   function versionPanel(source) {
     const panel = el("div", { class: "release-list", id: `panel-${source.id}`, role: "tabpanel", "aria-labelledby": `tab-${source.id}` });
     if (source.failed) {
       panel.append(el("div", { class: "release-empty" }, [
         el("h3", { text: `Couldn't load the ${source.name} releases` }),
-        el("p", { text: "GitHub didn't answer just now. They're all on the releases page." }),
+        el("p", { text: "Try again in a moment, or see them on GitHub." }),
         el("a", { class: "btn btn-ghost", href: releasesPage(source), text: "Open GitHub Releases" }),
       ]));
-    } else if (!source.releases.length) {
+    } else if (!source.index.total) {
       panel.append(el("div", { class: "release-loading", text: `No ${source.name} versions yet.` }));
     } else {
-      const latest = latestOf(source);
-      panel.append(...source.releases.map((r) => versionCard(source, r, r === latest && !r.prerelease)));
+      panel.append(...source.releases.map((r) => versionCard(source, r, isLatestStable(source, r))));
+      if (hasMore(source)) panel.append(moreButton(source, panel));
     }
     return panel;
   }
@@ -278,7 +319,7 @@
 
   function renderVersions() {
     const tabs = el("div", { class: "tabs", role: "tablist", "aria-label": "Platform" }, SOURCES.map((source) => {
-      const count = source.releases.length;
+      const count = source.index ? source.index.total : 0;
       const tab = el("button", { type: "button", class: "tab", role: "tab", id: `tab-${source.id}`, "aria-controls": `panel-${source.id}` }, [
         source.name,
         ...(count ? [el("span", { class: "tab-count", text: String(count) })] : []),
@@ -300,24 +341,22 @@
     const chips = document.querySelectorAll(".chip[data-filter]");
     chips.forEach((chip) => chip.addEventListener("click", () => {
       chips.forEach((c) => c.setAttribute("aria-pressed", String(c === chip)));
-      const filter = chip.dataset.filter;
-      allList.querySelectorAll(".version").forEach((card) => {
-        card.hidden = filter !== "all" && card.dataset.kind !== filter;
-      });
+      filter = chip.dataset.filter;
+      applyFilter(allList.querySelectorAll(".version"));
     }));
   }
 
   /* Page */
 
   function show() {
-    const anyRelease = SOURCES.some((s) => s.releases.length);
+    const anyRelease = SOURCES.some((s) => s.index && s.index.total);
     const allFailed = SOURCES.every((s) => s.failed);
 
     let card;
     if (allFailed) {
       card = el("div", { class: "release-empty" }, [
         el("h3", { text: "Couldn't load the releases" }),
-        el("p", { text: "GitHub didn't answer just now. They're all on the releases page." }),
+        el("p", { text: "Try again in a moment, or see them on GitHub." }),
         el("a", { class: "btn btn-ghost", href: releasesPage(SOURCES[0]), text: "Open GitHub Releases" }),
       ]);
     } else if (!anyRelease && !SOURCES.some((s) => s.failed)) {
@@ -346,86 +385,48 @@
       if (versions.length) {
         heroMeta.replaceChildren(`${versions.join(" · ")}. `, el("a", { href: "download.html", text: "All versions" }));
       } else if (SOURCES.some((s) => s.failed)) {
-        heroMeta.replaceChildren("Couldn't reach GitHub just now. ", el("a", { href: releasesPage(SOURCES[0]), text: "Releases on GitHub" }));
+        heroMeta.replaceChildren("Couldn't load the releases just now. ", el("a", { href: releasesPage(SOURCES[0]), text: "Releases on GitHub" }));
       } else {
         heroMeta.textContent = "The first release is coming soon.";
       }
     }
   }
 
-  // GitHub allows each visitor 60 API requests an hour, so a list fetched in the last few
-  // minutes is reused, and an older one stands in when GitHub refuses
-  const CACHE_FRESH_MS = 5 * 60 * 1000;
-
-  function readCache(source) {
-    try {
-      const entry = JSON.parse(localStorage.getItem(`releases:${source.repo}`));
-      return entry && Array.isArray(entry.releases) ? entry : null;
-    } catch {
-      return null;
-    }
+  async function getJson(path) {
+    // no-cache: always ask whether the file changed, so a new release shows at once
+    const res = await fetch(path, { cache: "no-cache" });
+    if (!res.ok) throw new Error(`${path}: ${res.status}`);
+    return res.json();
   }
 
-  function writeCache(source, releases) {
-    try {
-      localStorage.setItem(`releases:${source.repo}`, JSON.stringify({ at: Date.now(), releases }));
-    } catch {
-      // Storage full or blocked: the page works without it
-    }
+  async function loadNextPage(source) {
+    const number = source.loadedPages + 1;
+    const page = await getJson(`data/releases/${source.id}/page-${number}.json`);
+    source.releases.push(...page.releases);
+    source.loadedPages = number;
+    return page.releases;
   }
 
-  // Only the fields the page shows, so the cache stays small
-  function slim(release) {
-    const { tag_name, name, prerelease, draft, published_at, html_url, body } = release;
-    const assets = release.assets.map(({ name, size, download_count, browser_download_url, digest }) =>
-      ({ name, size, download_count, browser_download_url, digest }));
-    return { tag_name, name, prerelease, draft, published_at, html_url, body, assets };
+  // The page a #windows-v1.2.3 link points into, so it can be loaded before the cards are drawn
+  function pageForHash(source) {
+    const hash = decodeURIComponent(location.hash.slice(1));
+    if (!hash.startsWith(`${source.id}-`)) return 1;
+    return source.index.page_of[hash.slice(source.id.length + 1)] || 1;
   }
 
-  // The list the Pages workflow publishes with the site every 15 minutes. Older than this means
-  // the workflow has stopped, so the page asks GitHub itself.
-  const PUBLISHED_FRESH_MS = 6 * 60 * 60 * 1000;
-
-  function loadPublished(source) {
-    return fetch(`data/releases/${source.id}.json`, { cache: "no-cache" })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => (data && Array.isArray(data.releases) ? data : null))
-      .catch(() => null);
-  }
-
-  // A repository that isn't public yet (or has no releases) answers 404: no versions, not an error
-  function loadFromApi(source) {
-    return fetch(`https://api.github.com/repos/${source.repo}/releases?per_page=100`, { headers: { Accept: "application/vnd.github+json" } })
-      .then((res) => {
-        if (res.status === 404) return [];
-        return res.ok ? res.json() : Promise.reject(new Error(`${source.repo}: GitHub API ${res.status}`));
-      })
-      .then((releases) => {
-        const kept = releases.map(slim);
-        writeCache(source, kept);
-        return kept;
-      });
-  }
-
-  // Newest first: the published list, then the GitHub API (reused for 5 minutes), and when both
-  // fall through, whatever older list there is
   async function load(source) {
-    const use = (releases) => {
-      source.releases = releases.filter((r) => !r.draft);
-      source.failed = false;
-    };
-    const published = await loadPublished(source);
-    if (published && Date.now() - Date.parse(published.generated_at) < PUBLISHED_FRESH_MS) {
-      return use(published.releases);
-    }
-    const cached = readCache(source);
-    if (cached && Date.now() - cached.at < CACHE_FRESH_MS) return use(cached.releases);
     try {
-      return use(await loadFromApi(source));
+      source.index = await getJson(`data/releases/${source.id}/index.json`);
+      source.releases = [];
+      source.loadedPages = 0;
+      if (allList) {
+        const wanted = Math.min(pageForHash(source), source.index.pages);
+        while (source.loadedPages < wanted) await loadNextPage(source);
+      }
+      source.failed = false;
     } catch (err) {
       console.error(err);
-      const fallback = published ? published.releases : cached && cached.releases;
-      if (fallback) return use(fallback);
+      source.index = null;
       source.releases = [];
       source.failed = true;
     }

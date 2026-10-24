@@ -1,0 +1,70 @@
+# Tells the website about a release, from a workflow in Gazeora/Gazeora or
+# Gazeora/Gazeora-Android. Run it on the release event (published, edited, unpublished or
+# deleted), after any files are attached:
+#
+#   - uses: Gazeora/gazeora.github.io/.github/actions/publish-release@main
+#     with:
+#       platform: windows
+#       site-token: ${{ secrets.GAZEORA_SITE_TOKEN }}
+name: Publish a release to the Gazeora website
+description: Sends a release's details to gazeora.github.io, which stores them and redeploys.
+
+inputs:
+  platform:
+    description: "Which list the release belongs to: windows or android"
+    required: true
+  site-token:
+    description: A token that may send repository_dispatch events to the site (Contents read and write on it)
+    required: true
+  tag:
+    description: The release's tag. Defaults to the release that triggered the workflow.
+    default: ""
+  github-token:
+    description: Reads the release from this repository, which may be private
+    default: ${{ github.token }}
+  site-repo:
+    description: The website's repository
+    default: Gazeora/gazeora.github.io
+
+runs:
+  using: composite
+  steps:
+    - name: Send the release to the website
+      shell: bash
+      env:
+        PLATFORM: ${{ inputs.platform }}
+        SITE_TOKEN: ${{ inputs.site-token }}
+        REPO_TOKEN: ${{ inputs.github-token }}
+        SITE_REPO: ${{ inputs.site-repo }}
+        TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        EVENT: ${{ github.event.action }}
+        DRAFT: ${{ github.event.release.draft }}
+      run: |
+        if [ -z "$SITE_TOKEN" ]; then
+          echo "::error::No site token: add the GAZEORA_SITE_TOKEN secret to $GITHUB_REPOSITORY"
+          exit 1
+        fi
+        if [ -z "$TAG" ]; then
+          echo "::error::No release tag: run this on a release event or pass tag"
+          exit 1
+        fi
+        payload=$RUNNER_TEMP/site-release.json
+
+        # A deleted, unpublished or draft release comes off the site
+        if [ "$EVENT" = deleted ] || [ "$EVENT" = unpublished ] || [ "$DRAFT" = true ]; then
+          jq -n --arg platform "$PLATFORM" --arg repo "$GITHUB_REPOSITORY" --arg tag "$TAG" \
+            '{event_type: "release", client_payload: {platform: $platform, repo: $repo, action: "deleted", tag: $tag}}' > "$payload"
+        else
+          # Read back from GitHub rather than the event, so files attached after publishing are in it
+          GH_TOKEN=$REPO_TOKEN gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" > "$RUNNER_TEMP/release.json"
+          # repository_dispatch payloads are capped at 64 KB, so very long notes are shortened
+          jq --arg platform "$PLATFORM" --arg repo "$GITHUB_REPOSITORY" '{event_type: "release", client_payload: {
+              platform: $platform, repo: $repo, action: "upsert",
+              release: {tag_name, name, prerelease, published_at, html_url,
+                body: ((.body // "") | if length > 30000 then .[0:30000] + "\n\n…" else . end),
+                assets: [.assets[] | {name, size, browser_download_url, digest}]}}}' \
+            "$RUNNER_TEMP/release.json" > "$payload"
+        fi
+
+        GH_TOKEN=$SITE_TOKEN gh api "repos/$SITE_REPO/dispatches" --input "$payload"
+        echo "Sent $TAG ($PLATFORM) to $SITE_REPO"
