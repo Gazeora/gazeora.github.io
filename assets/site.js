@@ -217,7 +217,7 @@
       setupFilters();
       // The cards didn't exist when the browser looked for a #v1.2.3 link's target
       const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
-      if (target) target.scrollIntoView();
+      if (target) target.scrollIntoView({ behavior: "instant" });
     }
 
     if (heroDownloads) {

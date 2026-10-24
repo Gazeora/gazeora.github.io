@@ -12,6 +12,10 @@ load, so a published release appears here by itself:
 - `download.html` shows every release, newest first, with all the files attached to each, their
   sizes, download counts and SHA-256 checksums, and the source archives. `download.html#v1.0.0`
   links to one version.
+- `docs.html?doc=<name>` shows Gazeora's guides (`docs/<name>.md`), README, CONTRIBUTING,
+  LICENSE, NOTICE, TRADEMARKS and THIRD_PARTY_NOTICES, fetched from the `master` branch each time
+  the page opens. Links between them stay on the site, and a new file in `docs/` gets a sidebar
+  entry by itself. LICENSE and NOTICE are plain text and are reflowed into paragraphs.
 
 To preview locally:
 
