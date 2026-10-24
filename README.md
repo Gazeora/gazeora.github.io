@@ -10,7 +10,7 @@ releases come from files in `data/releases/`, which change only when a release d
 
 1. A release is published, edited or deleted in
    [Gazeora/Gazeora](https://github.com/Gazeora/Gazeora/releases) (Windows) or
-   Gazeora/Gazeora-Android (Android).
+   [Gazeora/Gazeora-Android](https://github.com/Gazeora/Gazeora-Android/releases) (Android).
 2. That repository's workflow runs the action in this repository,
    [`.github/actions/publish-release`](.github/actions/publish-release/action.yml). It reads the
    release back from GitHub, files and all, and sends it here as a `repository_dispatch` event.
