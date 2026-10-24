@@ -172,10 +172,11 @@
     for (const source of SOURCES) {
       const release = latestOf(source);
       if (!release) continue;
+      // Version, badge, then date: a narrow screen only ever moves the date to the next line
       parts.push(el("span", {}, [
         el("a", { href: `download.html#${cardId(source, release)}`, text: `${source.name} ${release.tag_name}` }),
-        ` · ${formatDate(release.published_at)}`,
         ...badges(release, false),
+        el("time", { datetime: release.published_at, text: formatDate(release.published_at) }),
       ]));
     }
     return el("div", { class: "release-meta" }, parts);
@@ -342,26 +343,69 @@
         const release = latestOf(s);
         return release && `${s.name} ${release.tag_name}${release.prerelease ? " (pre-release)" : ""}`;
       }).filter(Boolean);
-      heroMeta.replaceChildren(
-        versions.length ? `${versions.join(" · ")}. ` : "The first release is coming soon. ",
-        ...(versions.length ? [el("a", { href: "download.html", text: "All versions" })] : [])
-      );
+      if (versions.length) {
+        heroMeta.replaceChildren(`${versions.join(" · ")}. `, el("a", { href: "download.html", text: "All versions" }));
+      } else if (SOURCES.some((s) => s.failed)) {
+        heroMeta.replaceChildren("Couldn't reach GitHub just now. ", el("a", { href: releasesPage(SOURCES[0]), text: "Releases on GitHub" }));
+      } else {
+        heroMeta.textContent = "The first release is coming soon.";
+      }
     }
+  }
+
+  // GitHub allows each visitor 60 API requests an hour, so a list fetched in the last few
+  // minutes is reused, and an older one stands in when GitHub refuses
+  const CACHE_FRESH_MS = 5 * 60 * 1000;
+
+  function readCache(source) {
+    try {
+      const entry = JSON.parse(localStorage.getItem(`releases:${source.repo}`));
+      return entry && Array.isArray(entry.releases) ? entry : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function writeCache(source, releases) {
+    try {
+      localStorage.setItem(`releases:${source.repo}`, JSON.stringify({ at: Date.now(), releases }));
+    } catch {
+      // Storage full or blocked: the page works without it
+    }
+  }
+
+  // Only the fields the page shows, so the cache stays small
+  function slim(release) {
+    const { tag_name, name, prerelease, draft, published_at, html_url, body } = release;
+    const assets = release.assets.map(({ name, size, download_count, browser_download_url, digest }) =>
+      ({ name, size, download_count, browser_download_url, digest }));
+    return { tag_name, name, prerelease, draft, published_at, html_url, body, assets };
   }
 
   // A repository that isn't public yet (or has no releases) answers 404: no versions, not an error
   function load(source) {
+    const cached = readCache(source);
+    const use = (releases) => {
+      source.releases = releases.filter((r) => !r.draft);
+      source.failed = false;
+    };
+    if (cached && Date.now() - cached.at < CACHE_FRESH_MS) {
+      use(cached.releases);
+      return Promise.resolve();
+    }
     return fetch(`https://api.github.com/repos/${source.repo}/releases?per_page=100`, { headers: { Accept: "application/vnd.github+json" } })
       .then((res) => {
         if (res.status === 404) return [];
         return res.ok ? res.json() : Promise.reject(new Error(`${source.repo}: GitHub API ${res.status}`));
       })
       .then((releases) => {
-        source.releases = releases.filter((r) => !r.draft);
-        source.failed = false;
+        const kept = releases.map(slim);
+        writeCache(source, kept);
+        use(kept);
       })
       .catch((err) => {
         console.error(err);
+        if (cached) return use(cached.releases);
         source.releases = [];
         source.failed = true;
       });
