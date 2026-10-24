@@ -253,6 +253,11 @@ td:last-child { color: var(--text-dim); }
 .release-body img { max-width: 100%; }
 .release-body pre { overflow-x: auto; background: var(--inset); padding: 12px; border-radius: 8px; }
 .release-body pre code { border: 0; padding: 0; }
+.release-body .table-scroll { margin: 0 0 16px; border-radius: 10px; }
+.release-body table { min-width: 0; font-size: 14px; }
+.release-body th { text-transform: none; letter-spacing: 0; font-size: 13.5px; color: var(--text); }
+.release-body :is(th, td) { padding: 10px 14px; vertical-align: top; min-width: 110px; }
+.release-body :is(td, th) code { white-space: nowrap; }
 
 details.release > summary {
   list-style: none; cursor: pointer;

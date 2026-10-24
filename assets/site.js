@@ -83,6 +83,12 @@
     if (window.marked && window.DOMPurify) {
       body.innerHTML = DOMPurify.sanitize(marked.parse(markdown));
       body.querySelectorAll("a").forEach((a) => a.setAttribute("rel", "noopener"));
+      // A wide table scrolls in its own box instead of being cut off by the card
+      body.querySelectorAll("table").forEach((table) => {
+        const box = el("div", { class: "table-scroll" });
+        table.replaceWith(box);
+        box.append(table);
+      });
     } else {
       body.append(el("p", { text: markdown }));
     }
