@@ -3,6 +3,28 @@
  "pages": 1,
  "releases": [
   {
+   "tag_name": "v1.0.1-rc.1",
+   "name": "Gazeora v1.0.1-rc.1",
+   "prerelease": true,
+   "published_at": "2026-10-24T12:46:12Z",
+   "html_url": "https://github.com/Gazeora/Gazeora/releases/tag/v1.0.1-rc.1",
+   "body": "A patch release candidate of Gazeora for Windows. The app is the same as v1.0.0-rc.1; this release is the first to reach [gazeora.github.io](https://gazeora.github.io/download.html) the moment it's published.\n\nThis is a pre-release. Please try it with your games and [report what you find](https://github.com/Gazeora/Gazeora/issues/new/choose).\n\n## Downloads\n\n| File | For |\n|---|---|\n| `Gazeora-v1.0.1-rc.1-x64.msi` | 64-bit games (most games from the last decade) |\n| `Gazeora-v1.0.1-rc.1-x86.msi` | 32-bit games, including every Direct3D 8 game and many older Direct3D 9 and OpenGL ones |\n\nWindows 10 or 11. Installs over v1.0.0-rc.1, keeping your library and settings. To watch on your phone, get [Gazeora for Android](https://gazeora.github.io/download.html).\n\n## What changed since v1.0.0-rc.1\n\n- Every release is now sent to the website as it's published, edited or deleted, with its files and checksums.\n- The release steps in the development guide describe this.\n\nSee the [guides](https://gazeora.github.io/docs.html) to get started.\n",
+   "assets": [
+    {
+     "name": "Gazeora-v1.0.1-rc.1-x64.msi",
+     "size": 10162176,
+     "browser_download_url": "https://github.com/Gazeora/Gazeora/releases/download/v1.0.1-rc.1/Gazeora-v1.0.1-rc.1-x64.msi",
+     "digest": "sha256:1d17cb58dc81bb107c4efa8472d5408743665606337e44fd00efbef70ef98c5c"
+    },
+    {
+     "name": "Gazeora-v1.0.1-rc.1-x86.msi",
+     "size": 9441280,
+     "browser_download_url": "https://github.com/Gazeora/Gazeora/releases/download/v1.0.1-rc.1/Gazeora-v1.0.1-rc.1-x86.msi",
+     "digest": "sha256:54c4890887bf1a3b7a86f5c709532c0b412ece832704c6bc3590bba509aa662f"
+    }
+   ]
+  },
+  {
    "tag_name": "v1.0.0-rc.1",
    "name": "Gazeora v1.0.0-rc.1",
    "prerelease": true,
