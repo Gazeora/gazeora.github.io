@@ -175,6 +175,7 @@
       parts.push(el("span", {}, [
         el("a", { href: `download.html#${cardId(source, release)}`, text: `${source.name} ${release.tag_name}` }),
         ` · ${formatDate(release.published_at)}`,
+        ...badges(release, false),
       ]));
     }
     return el("div", { class: "release-meta" }, parts);
@@ -337,7 +338,10 @@
 
     if (heroDownloads) {
       heroDownloads.replaceChildren(...platformButtons("cta", true).children);
-      const versions = SOURCES.map((s) => latestOf(s) && `${s.name} ${latestOf(s).tag_name}`).filter(Boolean);
+      const versions = SOURCES.map((s) => {
+        const release = latestOf(s);
+        return release && `${s.name} ${release.tag_name}${release.prerelease ? " (pre-release)" : ""}`;
+      }).filter(Boolean);
       heroMeta.replaceChildren(
         versions.length ? `${versions.join(" · ")}. ` : "The first release is coming soon. ",
         ...(versions.length ? [el("a", { href: "download.html", text: "All versions" })] : [])

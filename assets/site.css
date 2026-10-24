@@ -279,6 +279,7 @@ details.release .release-date { margin-left: auto; }
   display: flex; flex-wrap: wrap; gap: 4px 20px;
   padding: 14px 24px 4px; color: var(--text-faint); font-size: 14px;
 }
+.release-meta .badge { margin-left: 8px; vertical-align: 1px; }
 .latest .notes-toggle { border-top: 1px solid var(--border); margin-top: 16px; }
 .latest .notes-toggle + .notes-toggle { margin-top: 0; }
 
