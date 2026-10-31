@@ -26,7 +26,8 @@ RELEASES = pathlib.Path("data/releases/windows/index.json")
 ROOT = pathlib.Path("data/docs")
 SAFE_TAG = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._+-]{0,99}$")
 SAFE_GUIDE = re.compile(r"^[a-z0-9][a-z0-9._-]*\.md$", re.I)
-PROJECT_FILES = ["README.md", "CONTRIBUTING.md", "LICENSE", "NOTICE", "TRADEMARKS.md", "THIRD_PARTY_NOTICES.md"]
+PROJECT_FILES = ["README.md", "CONTRIBUTING.md", "LICENSE", "NOTICE", "COMMERCIAL-LICENSE.md", "CLA.md",
+                 "TRADEMARKS.md", "THIRD_PARTY_NOTICES.md"]
 # Guides in this order first, then any others by title
 ORDER = ["streaming", "vr-viewer", "hand-gestures", "game-controller", "command-line", "tools",
          "installer", "configuration", "stream-format", "development"]
