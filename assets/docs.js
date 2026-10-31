@@ -22,6 +22,8 @@
     { key: "contributing", title: "Contributing", path: "CONTRIBUTING.md" },
     { key: "license", title: "License (GPL v3)", path: "LICENSE", plain: true },
     { key: "notice", title: "Notice", path: "NOTICE", plain: true },
+    { key: "commercial-license", title: "Commercial license", path: "COMMERCIAL-LICENSE.md" },
+    { key: "cla", title: "Contributor agreement", path: "CLA.md" },
     { key: "trademarks", title: "Name and logo", path: "TRADEMARKS.md" },
     { key: "third-party", title: "Third-party notices", path: "THIRD_PARTY_NOTICES.md" },
   ];
