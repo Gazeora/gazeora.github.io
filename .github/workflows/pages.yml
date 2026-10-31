@@ -1,6 +1,6 @@
 # Publishes the site. A release in Gazeora/Gazeora or Gazeora/Gazeora-Android arrives here as
 # a repository_dispatch event (sent by .github/actions/publish-release), is saved into
-# data/releases/ (and, for Windows, the latest release's docs into data/docs/) and committed,
+# data/releases/ (and the platform's latest release's docs into data/docs/<platform>/) and committed,
 # and the site is deployed with it. Visitors read those files, never the GitHub API.
 name: Pages
 
@@ -36,10 +36,11 @@ jobs:
           printf '%s' "$PAYLOAD" > "$RUNNER_TEMP/payload.json"
           python3 .github/scripts/release_data.py dispatch "$RUNNER_TEMP/payload.json"
 
-      # The docs follow the latest Windows release, so unreleased work on master stays off the site
+      # The docs follow each platform's latest release, so unreleased work on master stays off the site
       - name: Update data/docs
-        if: github.event.client_payload.platform == 'windows'
-        run: python3 .github/scripts/docs_data.py
+        env:
+          PLATFORM: ${{ github.event.client_payload.platform }}
+        run: python3 .github/scripts/docs_data.py "$PLATFORM"
 
       # Pushed with the workflow's own token, which doesn't start this workflow again
       - name: Commit the release lists
