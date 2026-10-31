@@ -1,4 +1,5 @@
 {
+ "platform": "windows",
  "repo": "Gazeora/Gazeora",
  "tag": "v1.0.1-rc.1",
  "guides": [

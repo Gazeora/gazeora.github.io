@@ -1,0 +1,14 @@
+{
+ "platform": "android",
+ "repo": "Gazeora/Gazeora-Android",
+ "tag": "v1.0.0-rc.1",
+ "guides": [],
+ "project": [
+  "README.md",
+  "CONTRIBUTING.md",
+  "LICENSE",
+  "NOTICE",
+  "TRADEMARKS.md",
+  "THIRD_PARTY_NOTICES.md"
+ ]
+}
