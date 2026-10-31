@@ -1,12 +1,19 @@
-// Shows Gazeora's Markdown docs, LICENSE and NOTICE inside the site. They're the latest
-// release's, copied into data/docs/ when it's published (see .github/scripts/docs_data.py), so
-// work on master shows here only once it's released. Locally, with no data/docs/, they're
-// fetched from master instead.
+// Shows the Markdown docs, LICENSE and NOTICE of Gazeora (Windows) and Gazeora for Android
+// inside the site, one platform at a time (docs.html?app=android&doc=...; Windows without app).
+// They're each platform's latest release's, copied into data/docs/<platform>/ when it's published
+// (see .github/scripts/docs_data.py), so work on master shows here only once it's released.
+// Locally, with no data/docs/<platform>/, they're fetched from master instead.
 (function () {
   "use strict";
 
-  const REPO = "Gazeora/Gazeora";
-  const SNAPSHOT = "data/docs/";
+  const PLATFORMS = {
+    windows: { repo: "Gazeora/Gazeora", name: "Windows", product: "Gazeora" },
+    android: { repo: "Gazeora/Gazeora-Android", name: "Android", product: "Gazeora for Android" },
+  };
+  const DEFAULT_PLATFORM = "windows";
+  const platform = platformOf(new URLSearchParams(location.search));
+  const REPO = PLATFORMS[platform].repo;
+  const SNAPSHOT = `data/docs/${platform}/`;
 
   // Where the files come from: the release's copy on this site, or master on GitHub
   let ref = "master";
@@ -41,6 +48,8 @@
   const menuEl = document.getElementById("docs-menu");
   const menuCurrent = document.getElementById("docs-menu-current");
   const versionEl = document.getElementById("doc-version");
+  document.getElementById("repo-link").href = `https://github.com/${REPO}`;
+  versionEl.replaceChildren("Shown from the ", el("code", { text: "master" }), ` branch of ${REPO}.`);
 
   let current = null;
   let tocObserver = null;
@@ -65,13 +74,23 @@
     return m ? pageByKey(m[1]) : null;
   }
 
+  function platformOf(params) {
+    const app = params.get("app");
+    return app && Object.hasOwn(PLATFORMS, app) ? app : DEFAULT_PLATFORM;
+  }
+
+  function platformHref(app) {
+    return app === DEFAULT_PLATFORM ? "docs.html" : `docs.html?app=${app}`;
+  }
+
   function titleFromKey(key) {
     const words = key.replace(/[-_]+/g, " ").trim();
     return words.charAt(0).toUpperCase() + words.slice(1);
   }
 
-  function docHref(page, hash) {
-    return `docs.html?doc=${encodeURIComponent(page.key)}${hash ? `#${hash}` : ""}`;
+  function docHref(page, hash, app = platform) {
+    const prefix = app === DEFAULT_PLATFORM ? "" : `app=${app}&`;
+    return `docs.html?${prefix}doc=${encodeURIComponent(page.key)}${hash ? `#${hash}` : ""}`;
   }
 
   function el(tag, attrs, children) {
@@ -87,7 +106,13 @@
   /* Sidebar */
 
   function renderNav() {
-    navEl.replaceChildren(...SECTIONS.map((section) => el("div", { class: "docs-nav-group" }, [
+    const platforms = el("div", { class: "docs-nav-group" }, [
+      el("p", { class: "docs-nav-title", text: "Platform" }),
+      el("ul", {}, Object.entries(PLATFORMS).map(([app, info]) => el("li", {}, [
+        el("a", { href: platformHref(app), text: info.name, ...(app === platform ? { "aria-current": "page" } : {}) }),
+      ]))),
+    ]);
+    navEl.replaceChildren(platforms, ...SECTIONS.filter((section) => section.pages.length).map((section) => el("div", { class: "docs-nav-group" }, [
       el("p", { class: "docs-nav-title", text: section.title }),
       el("ul", {}, section.pages.map((page) => el("li", {}, [
         el("a", { href: docHref(page), "data-key": page.key, text: page.title }),
@@ -96,14 +121,14 @@
   }
 
   function markActive(page) {
-    navEl.querySelectorAll("a").forEach((a) => {
+    navEl.querySelectorAll("a[data-key]").forEach((a) => {
       if (a.dataset.key === page.key) a.setAttribute("aria-current", "page");
       else a.removeAttribute("aria-current");
     });
     menuCurrent.textContent = page.title;
   }
 
-  // The latest release's copy of the docs, from data/docs/index.json
+  // The latest release's copy of the docs, from data/docs/<platform>/index.json
   function useRelease(index) {
     released = true;
     ref = index.tag;
@@ -111,7 +136,7 @@
     SECTIONS[0].pages = index.guides.map((g) => ({ key: g.key, title: g.title, path: g.path }));
     SECTIONS[1].pages = PROJECT.filter((p) => index.project.includes(p.path));
     versionEl.replaceChildren("Shown from ", el("a", {
-      href: `https://github.com/${REPO}/releases/tag/${encodeURIComponent(index.tag)}`, text: `Gazeora ${index.tag}`,
+      href: `https://github.com/${REPO}/releases/tag/${encodeURIComponent(index.tag)}`, text: `${PLATFORMS[platform].product} ${index.tag}`,
     }), ", the latest release.");
   }
 
@@ -147,7 +172,8 @@
   // Resolves a link in the file at fromPath the way GitHub does, then keeps it on this site
   // when it points at a page the site shows
   function rewriteLink(href, fromPath) {
-    if (!href || /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(href)) return null;  // absolute: leave
+    if (!href) return null;
+    if (/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(href)) return siteLink(href);  // absolute: the site's own page, if any
     if (href.startsWith("#")) return href;
     const url = new URL(href, `https://repo.invalid/${fromPath}`);
     const path = decodeURIComponent(url.pathname.slice(1));
@@ -156,6 +182,24 @@
     const page = pageByPath(path);
     if (page) return docHref(page, hash);
     return (path.endsWith("/") || !/\.[^/]+$/.test(path) ? tree() : blob()) + path + url.hash;
+  }
+
+  // A GitHub link to either repository's docs or project files, as the page on this site that
+  // shows them; null for anything else
+  function siteLink(href) {
+    const m = /^https:\/\/github\.com\/([^/]+\/[^/]+)\/blob\/[^/]+\/([^?#]+)(#.*)?$/i.exec(href);
+    const app = m && Object.keys(PLATFORMS).find((p) => PLATFORMS[p].repo.toLowerCase() === m[1].toLowerCase());
+    if (!app) return null;
+    const path = decodeURIComponent(m[2]);
+    const hash = m[3] ? m[3].slice(1) : "";
+    if (app === platform) {
+      const page = pageByPath(path);
+      return page ? docHref(page, hash) : null;
+    }
+    const project = PROJECT.find((p) => p.path.toLowerCase() === path.toLowerCase());
+    const guide = /^docs\/([a-z0-9][a-z0-9._-]*)\.md$/i.exec(path);
+    const key = project ? project.key : guide && guide[1];
+    return key ? docHref({ key }, hash, app) : null;
   }
 
   function rewriteImage(src, fromPath) {
@@ -371,7 +415,7 @@
         const h1 = body.querySelector("h1");
         const heading = h1 && h1.cloneNode(true);
         heading?.querySelector(".heading-anchor")?.remove();
-        document.title = `${heading ? heading.textContent.trim() : page.title} · Gazeora docs`;
+        document.title = `${heading ? heading.textContent.trim() : page.title} · ${PLATFORMS[platform].product} docs`;
         renderToc(body);
         footEl.hidden = false;
         scrollToHash();
@@ -394,6 +438,7 @@
     if (!a) return;
     const url = new URL(a.href, location.href);
     if (url.origin !== location.origin || !url.pathname.endsWith("/docs.html") || !url.searchParams.has("doc")) return;
+    if (platformOf(url.searchParams) !== platform) return;  // the other platform loads as a new page
     const page = pageByKey(url.searchParams.get("doc"));
     if (!page) return;
     event.preventDefault();

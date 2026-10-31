@@ -41,20 +41,26 @@ Each page:
   `download.html#android-v1.0.0` link to one version.
 - `docs.html?doc=<name>` shows Gazeora's guides (`docs/<name>.md`), README, CONTRIBUTING,
   LICENSE, NOTICE, TRADEMARKS and THIRD_PARTY_NOTICES as they are in the latest Windows release
-  (the newest stable one, or the newest pre-release before there is one). Links between them
-  stay on the site. LICENSE and NOTICE are plain text and are reflowed into paragraphs.
+  (the newest stable one, or the newest pre-release before there is one), and
+  `docs.html?app=android&doc=<name>` the same for Gazeora for Android's latest release. The
+  sidebar switches between the two. Links between the pages stay on the site, including GitHub
+  links from one repository's docs to the other's. LICENSE and NOTICE are plain text and are
+  reflowed into paragraphs.
 
 ## How the docs get here
 
-When a Windows release arrives, the Pages workflow also runs
-[`docs_data.py`](.github/scripts/docs_data.py). It clones Gazeora/Gazeora at the latest release's
-tag and replaces `data/docs/` with that tag's docs and an `index.json` listing them, which is
-committed with the release lists. So work on `master` reaches the site only once it's released,
-and a guide added or deleted in a release appears or disappears with it. The sidebar order is the
-`ORDER` list in that script; guides it doesn't name follow, by title. To refresh by hand:
+When a release arrives, the Pages workflow also runs
+[`docs_data.py`](.github/scripts/docs_data.py) for its platform. It clones that platform's
+repository (Gazeora/Gazeora for `windows`, Gazeora/Gazeora-Android for `android`) at the
+platform's latest release tag and replaces `data/docs/<platform>/` with that tag's docs and an
+`index.json` listing them, which is committed with the release lists. So work on `master` reaches
+the site only once it's released, and a guide added or deleted in a release appears or
+disappears with it. The sidebar order is each platform's `order` list in that script; guides it
+doesn't name follow, by title. To refresh by hand:
 
 ```sh
-python .github/scripts/docs_data.py
+python .github/scripts/docs_data.py windows
+python .github/scripts/docs_data.py android
 ```
 
 To preview locally:
@@ -64,7 +70,7 @@ python -m http.server 8000
 ```
 
 Locally there's no `data/releases/`, so the page reads the releases from the GitHub API. Without
-`data/docs/`, the docs page reads `master` instead.
+`data/docs/<platform>/`, the docs page reads that repository's `master` instead.
 
 Colors follow the launcher's theme (`apps/gazeora/src/ui/theme.h` in the Gazeora repository).
 The logo and icon are copied from `apps/gazeora/resources`.
