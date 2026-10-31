@@ -1,43 +1,33 @@
-// Shows Gazeora's Markdown docs, LICENSE and NOTICE inside the site. Each file is fetched live
-// from the repository's master branch, so an edit on GitHub shows here without touching the site.
+// Shows Gazeora's Markdown docs, LICENSE and NOTICE inside the site. They're the latest
+// release's, copied into data/docs/ when it's published (see .github/scripts/docs_data.py), so
+// work on master shows here only once it's released. Locally, with no data/docs/, they're
+// fetched from master instead.
 (function () {
   "use strict";
 
   const REPO = "Gazeora/Gazeora";
-  const BRANCH = "master";
-  const RAW = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/`;
-  const BLOB = `https://github.com/${REPO}/blob/${BRANCH}/`;
-  const TREE = `https://github.com/${REPO}/tree/${BRANCH}/`;
-  const CONTENTS_API = `https://api.github.com/repos/${REPO}/contents/docs?ref=${BRANCH}`;
+  const SNAPSHOT = "data/docs/";
 
-  // The sidebar, in order. Guides are docs/<key>.md; a guide added to docs/ later shows up at
-  // the end of the list by itself (see addNewGuides).
+  // Where the files come from: the release's copy on this site, or master on GitHub
+  let ref = "master";
+  let files = `https://raw.githubusercontent.com/${REPO}/master/`;
+  let released = false;
+  const raw = () => `https://raw.githubusercontent.com/${REPO}/${ref}/`;
+  const blob = () => `https://github.com/${REPO}/blob/${ref}/`;
+  const tree = () => `https://github.com/${REPO}/tree/${ref}/`;
+
+  // The sidebar. Guides are docs/<key>.md, listed by data/docs/index.json in order.
+  const PROJECT = [
+    { key: "readme", title: "Overview", path: "README.md" },
+    { key: "contributing", title: "Contributing", path: "CONTRIBUTING.md" },
+    { key: "license", title: "License (GPL v3)", path: "LICENSE", plain: true },
+    { key: "notice", title: "Notice", path: "NOTICE", plain: true },
+    { key: "trademarks", title: "Name and logo", path: "TRADEMARKS.md" },
+    { key: "third-party", title: "Third-party notices", path: "THIRD_PARTY_NOTICES.md" },
+  ];
   const SECTIONS = [
-    {
-      title: "Guides",
-      pages: [
-        { key: "streaming", title: "Streaming" },
-        { key: "vr-viewer", title: "VR viewer mode" },
-        { key: "hand-gestures", title: "Hand gestures" },
-        { key: "command-line", title: "Command line" },
-        { key: "tools", title: "Tools" },
-        { key: "installer", title: "Installer" },
-        { key: "configuration", title: "Configuration files" },
-        { key: "stream-format", title: "Stream format" },
-        { key: "development", title: "Development" },
-      ].map((p) => ({ ...p, path: `docs/${p.key}.md` })),
-    },
-    {
-      title: "Project",
-      pages: [
-        { key: "readme", title: "Overview", path: "README.md" },
-        { key: "contributing", title: "Contributing", path: "CONTRIBUTING.md" },
-        { key: "license", title: "License (GPL v3)", path: "LICENSE", plain: true },
-        { key: "notice", title: "Notice", path: "NOTICE", plain: true },
-        { key: "trademarks", title: "Name and logo", path: "TRADEMARKS.md" },
-        { key: "third-party", title: "Third-party notices", path: "THIRD_PARTY_NOTICES.md" },
-      ],
-    },
+    { title: "Guides", pages: [] },
+    { title: "Project", pages: PROJECT.slice() },
   ];
   const DEFAULT_KEY = "readme";
 
@@ -48,6 +38,7 @@
   const sourceEl = document.getElementById("doc-source");
   const menuEl = document.getElementById("docs-menu");
   const menuCurrent = document.getElementById("docs-menu-current");
+  const versionEl = document.getElementById("doc-version");
 
   let current = null;
   let tocObserver = null;
@@ -59,7 +50,7 @@
 
   function pageByKey(key) {
     const known = allPages().find((p) => p.key === key);
-    if (known) return known;
+    if (known || released) return known || null;  // a release's copy has every page it shows
     // Any other docs/<name>.md, such as one linked from a guide before the sidebar knows it
     if (/^[a-z0-9][a-z0-9._-]*$/i.test(key)) return { key, title: titleFromKey(key), path: `docs/${key}.md` };
     return null;
@@ -110,27 +101,32 @@
     menuCurrent.textContent = page.title;
   }
 
-  // Lists docs/ on GitHub, so a guide added there gets a sidebar entry without a site change.
-  // Best effort: the API allows 60 requests an hour per visitor, and the list above still works.
-  function addNewGuides() {
-    fetch(CONTENTS_API, { headers: { Accept: "application/vnd.github+json" } })
+  // The latest release's copy of the docs, from data/docs/index.json
+  function useRelease(index) {
+    released = true;
+    ref = index.tag;
+    files = SNAPSHOT;
+    SECTIONS[0].pages = index.guides.map((g) => ({ key: g.key, title: g.title, path: g.path }));
+    SECTIONS[1].pages = PROJECT.filter((p) => index.project.includes(p.path));
+    versionEl.replaceChildren("Shown from ", el("a", {
+      href: `https://github.com/${REPO}/releases/tag/${encodeURIComponent(index.tag)}`, text: `Gazeora ${index.tag}`,
+    }), ", the latest release.");
+  }
+
+  // Without a release's copy (a local preview), lists docs/ on master. The API allows 60
+  // requests an hour per visitor.
+  function listMasterGuides() {
+    return fetch(`https://api.github.com/repos/${REPO}/contents/docs?ref=master`, { headers: { Accept: "application/vnd.github+json" } })
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error(`GitHub API ${res.status}`))))
-      .then((files) => {
-        const guides = SECTIONS[0].pages;
-        let added = false;
-        for (const file of files) {
-          if (file.type !== "file" || !/\.md$/i.test(file.name)) continue;
-          if (guides.some((p) => p.path === file.path)) continue;
-          const key = file.name.replace(/\.md$/i, "");
-          guides.push({ key, title: titleFromKey(key), path: file.path });
-          added = true;
-        }
-        if (added) {
-          renderNav();
-          if (current) markActive(current);
-        }
+      .then((list) => {
+        SECTIONS[0].pages = list
+          .filter((file) => file.type === "file" && /\.md$/i.test(file.name))
+          .map((file) => {
+            const key = file.name.replace(/\.md$/i, "");
+            return { key, title: titleFromKey(key), path: file.path };
+          });
       })
-      .catch(() => {});
+      .catch((err) => console.error(err));
   }
 
   /* Rendering */
@@ -157,12 +153,12 @@
     if (path === fromPath) return hash ? `#${hash}` : docHref(pageByPath(path));
     const page = pageByPath(path);
     if (page) return docHref(page, hash);
-    return (path.endsWith("/") || !/\.[^/]+$/.test(path) ? TREE : BLOB) + path + url.hash;
+    return (path.endsWith("/") || !/\.[^/]+$/.test(path) ? tree() : blob()) + path + url.hash;
   }
 
   function rewriteImage(src, fromPath) {
     if (!src || /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(src)) return null;
-    return RAW + new URL(src, `https://repo.invalid/${fromPath}`).pathname.slice(1);
+    return raw() + new URL(src, `https://repo.invalid/${fromPath}`).pathname.slice(1);
   }
 
   // > [!NOTE] blocks, as GitHub draws them
@@ -336,7 +332,7 @@
     docEl.replaceChildren(el("div", { class: "release-empty" }, [
       el("h3", { text: "Couldn't load this page" }),
       el("p", { text: "GitHub didn't answer just now, or the page has moved." }),
-      el("a", { class: "btn btn-ghost", href: BLOB + page.path, text: "Open it on GitHub" }),
+      el("a", { class: "btn btn-ghost", href: blob() + page.path, text: "Open it on GitHub" }),
     ]));
     tocEl.replaceChildren();
     footEl.hidden = true;
@@ -344,8 +340,8 @@
 
   function fetchText(page) {
     if (cache.has(page.path)) return Promise.resolve(cache.get(page.path));
-    // no-cache: always ask GitHub whether the file changed, so edits show up
-    return fetch(RAW + page.path, { cache: "no-cache" })
+    // no-cache: always ask whether the file changed, so a new release's docs show up
+    return fetch(files + page.path, { cache: "no-cache" })
       .then((res) => (res.ok ? res.text() : Promise.reject(new Error(`${page.path}: ${res.status}`))))
       .then((text) => {
         cache.set(page.path, text);
@@ -364,7 +360,7 @@
   function load(page) {
     current = page;
     markActive(page);
-    sourceEl.href = BLOB + page.path;
+    sourceEl.href = blob() + page.path;
     return fetchText(page)
       .then((text) => {
         if (current !== page) return;  // another page was picked meanwhile
@@ -420,7 +416,11 @@
   menuEl.open = !phone.matches;
   phone.addEventListener("change", () => (menuEl.open = !phone.matches));
 
-  renderNav();
-  load(pageFromLocation());
-  addNewGuides();
+  fetch(SNAPSHOT + "index.json", { cache: "no-cache" })
+    .then((res) => (res.ok ? res.json() : Promise.reject(new Error(`${SNAPSHOT}index.json: ${res.status}`))))
+    .then(useRelease, () => listMasterGuides())
+    .then(() => {
+      renderNav();
+      load(pageFromLocation());
+    });
 })();

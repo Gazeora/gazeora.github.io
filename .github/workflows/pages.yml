@@ -1,7 +1,7 @@
 # Publishes the site. A release in Gazeora/Gazeora or Gazeora/Gazeora-Android arrives here as
 # a repository_dispatch event (sent by .github/actions/publish-release), is saved into
-# data/releases/ and committed, and the site is deployed with it. Visitors read those files,
-# never the GitHub API.
+# data/releases/ (and, for Windows, the latest release's docs into data/docs/) and committed,
+# and the site is deployed with it. Visitors read those files, never the GitHub API.
 name: Pages
 
 on:
@@ -36,6 +36,11 @@ jobs:
           printf '%s' "$PAYLOAD" > "$RUNNER_TEMP/payload.json"
           python3 .github/scripts/release_data.py dispatch "$RUNNER_TEMP/payload.json"
 
+      # The docs follow the latest Windows release, so unreleased work on master stays off the site
+      - name: Update data/docs
+        if: github.event.client_payload.platform == 'windows'
+        run: python3 .github/scripts/docs_data.py
+
       # Pushed with the workflow's own token, which doesn't start this workflow again
       - name: Commit the release lists
         env:
@@ -43,7 +48,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/releases
+          git add data/releases data/docs
           if git diff --cached --quiet; then
             echo "Nothing changed"
             exit 0

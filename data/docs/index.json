@@ -1,0 +1,59 @@
+{
+ "repo": "Gazeora/Gazeora",
+ "tag": "v1.0.1-rc.1",
+ "guides": [
+  {
+   "key": "streaming",
+   "title": "Streaming",
+   "path": "docs/streaming.md"
+  },
+  {
+   "key": "vr-viewer",
+   "title": "VR viewer mode",
+   "path": "docs/vr-viewer.md"
+  },
+  {
+   "key": "hand-gestures",
+   "title": "Hand gestures",
+   "path": "docs/hand-gestures.md"
+  },
+  {
+   "key": "command-line",
+   "title": "Command line",
+   "path": "docs/command-line.md"
+  },
+  {
+   "key": "tools",
+   "title": "Tools",
+   "path": "docs/tools.md"
+  },
+  {
+   "key": "installer",
+   "title": "Installer",
+   "path": "docs/installer.md"
+  },
+  {
+   "key": "configuration",
+   "title": "Configuration files",
+   "path": "docs/configuration.md"
+  },
+  {
+   "key": "stream-format",
+   "title": "Stream format",
+   "path": "docs/stream-format.md"
+  },
+  {
+   "key": "development",
+   "title": "Development",
+   "path": "docs/development.md"
+  }
+ ],
+ "project": [
+  "README.md",
+  "CONTRIBUTING.md",
+  "LICENSE",
+  "NOTICE",
+  "TRADEMARKS.md",
+  "THIRD_PARTY_NOTICES.md"
+ ]
+}
