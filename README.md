@@ -44,6 +44,13 @@ Each page:
   (the newest stable one, or the newest pre-release before there is one). Links between them
   stay on the site. LICENSE and NOTICE are plain text and are reflowed into paragraphs.
 
+## The plugin list
+
+`data/plugins/windows/index.json` is the list the Plugins page in Gazeora searches and installs
+from. It's edited by hand, and starts empty. Gazeora's
+[plugins guide](https://github.com/Gazeora/Gazeora/blob/master/docs/plugins.md#publishing-to-the-plugin-list)
+describes the format.
+
 ## How the docs get here
 
 When a Windows release arrives, the Pages workflow also runs
