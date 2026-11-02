@@ -3,6 +3,28 @@
  "pages": 1,
  "releases": [
   {
+   "tag_name": "v1.0.2-rc.1",
+   "name": "Gazeora v1.0.2-rc.1",
+   "prerelease": true,
+   "published_at": "2026-11-02T05:32:35Z",
+   "html_url": "https://github.com/Gazeora/Gazeora/releases/tag/v1.0.2-rc.1",
+   "body": "## What's Changed\n* Fix security vulnerabilities in the driver install and network stream by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/5\n* feat: always capture games launched from the launcher by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/6\n* feat: navigate the launcher with a game controller by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/7\n* style: make the launcher easier to read by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/8\n* feat: mark gazeora's window in the stream and drop the logo idle picture by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/9\n* chore: remove hand gestures (work in progress) by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/10\n* ci: replace the weekly run with a weekly patch pre-release by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/11\n* feat: take the phone's hand pointer input in vr by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/12\n* docs: offer gazeora under a commercial license as well as the gpl by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/13\n* feat: turn the game camera with head tracking by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/14\n* feat: show the phone camera status in the stream overlay by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/15\n* feat: add a cmake option to leave out the stream overlay by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/16\n* docs: rewrite the readme and guides against the code by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/17\n* fix: drop the stale capture hint from the head tracking card by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/18\n* fix: install the guides in a docs folder beside the readme by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/19\n* feat: add a report a problem button by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/20\n* feat: check for updates and install them from the launcher by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/21\n* feat: remove games with missing exe files at startup by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/22\n* feat: add plugins and a plugins page by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/23\n* feat: game controllers as a bundled plugin, with XML plugin cards by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/24\n* refactor: each bundled plugin in its own folder, with leak and hot-path fixes by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/25\n* docs: plugin development guide, example plugin and architecture diagrams by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/26\n* feat: install and uninstall plugins without restarting Gazeora by @NithinAashikPS in https://github.com/Gazeora/Gazeora/pull/27\n\n\n**Full Changelog**: https://github.com/Gazeora/Gazeora/compare/v1.0.1-rc.1...v1.0.2-rc.1",
+   "assets": [
+    {
+     "name": "Gazeora-v1.0.2-rc.1-x64.msi",
+     "size": 4214784,
+     "browser_download_url": "https://github.com/Gazeora/Gazeora/releases/download/v1.0.2-rc.1/Gazeora-v1.0.2-rc.1-x64.msi",
+     "digest": "sha256:00022058999833425d4f2156e40e65ce29f446d9b11de1426167e840f0870f0a"
+    },
+    {
+     "name": "Gazeora-v1.0.2-rc.1-x86.msi",
+     "size": 3719168,
+     "browser_download_url": "https://github.com/Gazeora/Gazeora/releases/download/v1.0.2-rc.1/Gazeora-v1.0.2-rc.1-x86.msi",
+     "digest": "sha256:c7dd63dc56ba3a5a18ec5841b5bf524f3d78819855ff477ed6f40184378d860f"
+    }
+   ]
+  },
+  {
    "tag_name": "v1.0.1-rc.1",
    "name": "Gazeora v1.0.1-rc.1",
    "prerelease": true,

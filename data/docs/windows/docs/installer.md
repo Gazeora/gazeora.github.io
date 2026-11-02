@@ -7,8 +7,8 @@ Gazeora ships as one MSI per release: `Gazeora-v<version>-x64.msi` for 64-bit ga
 ## Building the MSI
 
 The MSI is built with [WiX](https://wixtoolset.org/) 5, which comes as a .NET tool pinned in
-`dotnet-tools.json`. Building needs the .NET SDK (6 or newer); the build fetches WiX and its
-extensions on first use.
+`dotnet-tools.json`. Building needs the .NET SDK; without it, configuring turns the `gazeora_msi` target off. The
+build fetches WiX and its extensions on first use.
 
 ```powershell
 cmake --build build --target gazeora_msi    # writes build\Gazeora-v1.0.0-x64.msi
@@ -16,7 +16,7 @@ cmake --build build --target gazeora_msi    # writes build\Gazeora-v1.0.0-x64.ms
 
 The target builds what the MSI holds, stages it with `cmake --install` (the `Runtime` and
 `Tools` components) under `build\installer\stage`, and packs that. So the MSI holds exactly
-what the install rules list (see [Installing](../README.md#installing)). The version comes
+what the install rules list (see [Installing a build](development.md#installing-a-build)). The version comes
 from the `VERSION` file (see [Releasing](development.md#releasing)). With a signing certificate
 set (see `cmake/CodeSigning.cmake`), the programs, the custom-action DLL and the MSI are all
 signed.
@@ -36,10 +36,10 @@ administrator. The wizard's feature tree has:
 
 | Feature | Default | What it does |
 |---|---|---|
-| Gazeora | Always | `Uninstall.exe`, the programs, the hook, ONNX Runtime and the models in `bin\`, the guides and licenses in `share\doc\Gazeora`, and a Start menu shortcut |
+| Gazeora | Always | `Uninstall.exe`, the programs and the hook in `bin\`, the [bundled plugins](plugins.md#bundled-plugins), not installed, in `bundled-plugins\`, the guides and licenses in `share\doc\Gazeora`, and a Start menu shortcut |
 | Desktop shortcut | On | A shortcut on the desktop |
 | Add GazeoraCLI to PATH | On | Adds `bin\` to the system PATH, so `GazeoraCLI` runs from any new command prompt |
-| Open with Gazeora in Explorer | On | Right-click a game's `.exe` or shortcut and pick **Open with Gazeora** to add it to the library. On Windows 11 it's under **Show more options**. If Gazeora is already open, the game goes to that window |
+| Open with Gazeora in Explorer | On | Right-click a game's `.exe` or shortcut and pick **Open with Gazeora** (**Open with Gazeora (32-bit)** for the x86 release) to add it to the library. On Windows 11 it's under **Show more options**. If Gazeora is already open, the game goes to that window |
 | Allow the stream through the firewall | On | A Windows Firewall rule for `Gazeora.exe` on **private** networks, from the local subnet only. On a network Windows calls public, the stream stays blocked: make the network private in Windows' network settings |
 | Developer tools | Off | `gazeora_testapp.exe` and `gazeora_stream_probe.exe` ([Tools](tools.md)) |
 
@@ -58,6 +58,29 @@ the same uninstall. Uninstalling removes everything the features added, and also
 
 Upgrading to a newer MSI does neither: the library, the settings and the driver stay.
 
+## Updating
+
+**Settings → Updates** in `Gazeora.exe` finds and installs newer releases.
+
+- **Checking.** At each start, Gazeora reads the list of Windows releases that
+  [gazeora.github.io](https://gazeora.github.io) publishes, over HTTPS. Turn off **Check for
+  updates when Gazeora starts** to stop that (saved in [`updates.ini`](configuration.md#updatesini))
+  and use **Check now** instead. Nothing about you or the PC is sent beyond what any web
+  request carries: the PC's IP address, and Gazeora's version in the user agent.
+- **What's offered.** A release (`v1.2.0`) is offered newer releases only. A release candidate
+  (`v1.2.0-rc.1`) is also offered newer release candidates. A release is offered only if it has an
+  MSI for the running build (x64 or x86).
+- **Installing.** **Download and install** downloads that MSI to `%TEMP%\Gazeora\updates` and
+  checks its size and SHA-256 against what the release published. If either doesn't match, the
+  file is deleted and nothing runs. Otherwise Gazeora opens the MSI's wizard and closes itself so
+  its files can be replaced. The wizard asks for administrator permission, as a first install
+  does. The button is disabled while a game launched from Gazeora runs.
+- **If it fails.** **Try again** repeats the step. **Download it yourself** opens the release's
+  page on GitHub.
+
+The wizard starts from the default install folder. If Gazeora was installed somewhere else, pick
+that folder again in the wizard.
+
 ## Silent installs
 
 Feature IDs and properties for `msiexec`:
@@ -75,7 +98,7 @@ keeps it. Without the property, a silent uninstall keeps the data.
 
 ## Layout
 
-```
+```text
 installer/
   CMakeLists.txt        The gazeora_msi target
   cmake/TextToRtf.cmake NOTICE and LICENSE as the license page's RTF

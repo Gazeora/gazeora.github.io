@@ -1,8 +1,13 @@
 {
  "platform": "windows",
  "repo": "Gazeora/Gazeora",
- "tag": "v1.0.1-rc.1",
+ "tag": "v1.0.2-rc.1",
  "guides": [
+  {
+   "key": "getting-started",
+   "title": "Getting started",
+   "path": "docs/getting-started.md"
+  },
   {
    "key": "streaming",
    "title": "Streaming",
@@ -14,9 +19,9 @@
    "path": "docs/vr-viewer.md"
   },
   {
-   "key": "hand-gestures",
-   "title": "Hand gestures",
-   "path": "docs/hand-gestures.md"
+   "key": "game-controller",
+   "title": "Game controller",
+   "path": "docs/game-controller.md"
   },
   {
    "key": "command-line",
@@ -39,14 +44,39 @@
    "path": "docs/configuration.md"
   },
   {
+   "key": "troubleshooting",
+   "title": "Troubleshooting",
+   "path": "docs/troubleshooting.md"
+  },
+  {
    "key": "stream-format",
    "title": "Stream format",
    "path": "docs/stream-format.md"
   },
   {
+   "key": "architecture",
+   "title": "Architecture",
+   "path": "docs/architecture.md"
+  },
+  {
    "key": "development",
    "title": "Development",
    "path": "docs/development.md"
+  },
+  {
+   "key": "plugin-development",
+   "title": "Plugin development",
+   "path": "docs/plugin-development.md"
+  },
+  {
+   "key": "plugin-ui",
+   "title": "Plugin UI",
+   "path": "docs/plugin-ui.md"
+  },
+  {
+   "key": "plugins",
+   "title": "Plugins",
+   "path": "docs/plugins.md"
   }
  ],
  "project": [
@@ -54,6 +84,8 @@
   "CONTRIBUTING.md",
   "LICENSE",
   "NOTICE",
+  "COMMERCIAL-LICENSE.md",
+  "CLA.md",
   "TRADEMARKS.md",
   "THIRD_PARTY_NOTICES.md"
  ]

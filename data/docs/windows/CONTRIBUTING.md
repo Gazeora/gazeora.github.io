@@ -8,7 +8,8 @@ don't need to write code to help.
 - **Report a problem.** [Open an issue](https://github.com/Gazeora/Gazeora/issues/new/choose)
   and pick the form that fits: bug report, crash or freeze, performance problem, or feature
   request. Each form asks for what's needed to look into it, such as the version, the stream
-  settings and `stream.log`.
+  settings and `stream.log`. **Report a problem** in Gazeora's **Settings → About** opens the
+  bug report with the version and PC already filled in.
 - **Tell us how a game works.** The **Game compatibility** form records whether a game captures,
   with which graphics API and launcher. Reports that a game works are as useful as ones that
   don't: they build the list of tested games.
@@ -22,20 +23,21 @@ Found a security problem? Don't open an issue:
 
 ## Setting up
 
-1. Build Gazeora as the [README](README.md#building) describes: CMake 3.20 or newer, and
-   MinGW-w64 or Visual Studio 2022 or newer. The compiler's bitness picks the release (x64 or
-   x86).
-2. Run the tests from the build folder with `ctest --output-on-failure`. They run Direct3D on
-   WARP, so no GPU is needed.
+1. Build Gazeora as [Development](docs/development.md#building) describes: CMake 3.20 or
+   newer, and MinGW-w64 or Visual Studio 2022 or newer. The compiler's bitness picks the
+   release (x64 or x86).
+2. Run the tests with `ctest --test-dir build --output-on-failure`. They run Direct3D on WARP,
+   so no GPU is needed.
 3. Install the pre-commit hook, which formats C and C++ with clang-format and checks line
-   endings and whitespace before each commit:
+   endings, whitespace and license headers before each commit:
 
    ```powershell
    pip install pre-commit
    pre-commit install
    ```
 
-[Development](docs/development.md) covers the tests, the benchmarks and the project layout. The
+[Development](docs/development.md) covers building, the tests and the benchmarks, and
+[Architecture](docs/architecture.md) the project layout. The
 [stream format](docs/stream-format.md) and the other guides in `docs/` describe how each part
 works.
 
@@ -73,7 +75,8 @@ Match the code around your change. When in doubt, look at how a similar part alr
    Types: `feat`, `fix`, `perf`, `refactor`, `docs`, `test`, `chore`, `style`. Make small
    commits, one logical change each.
 3. Add tests for new logic where it can run without a GPU or a game, and update the README or
-   the guides in `docs/` when users will notice the change.
+   the guides in `docs/` when users will notice the change, following
+   [DOCUMENTATION_RULES.md](DOCUMENTATION_RULES.md).
 4. Check that both releases still build if your change touches anything bitness-specific, and
    that `ctest` passes.
 5. Open the pull request and fill in its template: what changed, which part, and how you tested
@@ -85,9 +88,20 @@ of getting the change in, not a judgment of it.
 ## License of contributions
 
 Gazeora is free software under the [GNU GPL version 3](LICENSE) with the additional terms in
-[NOTICE](NOTICE). By opening a pull request, you confirm that you have the right to submit the
-work and agree that it is licensed under those same terms. Code from elsewhere must come under a
-license compatible with the GPL version 3; name it in the pull request, and add it to
+[NOTICE](NOTICE), and is also offered under a [commercial license](COMMERCIAL-LICENSE.md). So
+that every part of it can be offered both ways, contributors sign the
+[Contributor License Agreement](CLA.md) once: on your first pull request, a bot asks you to
+post a one-line comment that signs it. In short, you confirm that you have the right to submit
+the work, and you agree that:
+
+- it is licensed under the GPL version 3 with the terms in [NOTICE](NOTICE); and
+- you also grant Nithin Aashik a perpetual, worldwide, non-exclusive, royalty-free and
+  irrevocable license to use, change, sublicense and distribute it under other terms,
+  including the commercial license.
+
+You keep the copyright in your work, and can use it however you like. Code from elsewhere must
+come under a license compatible with the GPL version 3 that also allows the commercial license,
+such as MIT, BSD or Apache 2.0; name it in the pull request, and add it to
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 The Gazeora name and logo aren't covered by the license: see [TRADEMARKS.md](TRADEMARKS.md).
