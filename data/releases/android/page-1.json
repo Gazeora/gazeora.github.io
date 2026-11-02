@@ -3,6 +3,22 @@
  "pages": 1,
  "releases": [
   {
+   "tag_name": "v1.0.1-rc.1",
+   "name": "Gazeora v1.0.1-rc.1",
+   "prerelease": true,
+   "published_at": "2026-11-02T04:14:22Z",
+   "html_url": "https://github.com/Gazeora/Gazeora-Android/releases/tag/v1.0.1-rc.1",
+   "body": "## What's Changed\n* Fix security vulnerabilities in the native client by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/4\n* fix: rename layout shader uniform that adreno drivers reject by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/5\n* refactor: move shaders into their own files by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/6\n* feat: float gazeora's window in the room over the back camera by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/7\n* ci: add a weekly patch pre-release by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/8\n* feat: track the viewer's hands and point at gazeora's window by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/9\n* docs: offer the app under a commercial license as well as the gpl by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/10\n* feat: track the head with the phone's rotation sensor by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/11\n* feat: turn the camera off in the dark and report its status to the pc by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/12\n* feat: add a build option to leave out the camera status for the overlay by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/13\n* docs: rewrite the readme and add guides by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/14\n* build: run the head orientation host tests in ci by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/15\n* feat: add a report a problem button by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/16\n* feat: spin the logo's rings like a gyroscope by @NithinAashikPS in https://github.com/Gazeora/Gazeora-Android/pull/17\n\n\n**Full Changelog**: https://github.com/Gazeora/Gazeora-Android/compare/v1.0.0-rc.1...v1.0.1-rc.1",
+   "assets": [
+    {
+     "name": "Gazeora-v1.0.1-rc.1.apk",
+     "size": 35899767,
+     "browser_download_url": "https://github.com/Gazeora/Gazeora-Android/releases/download/v1.0.1-rc.1/Gazeora-v1.0.1-rc.1.apk",
+     "digest": "sha256:f61157b260a0bc4f3b63aa483171deb65fd8349d128dbbf4b96dd8ec91a5f380"
+    }
+   ]
+  },
+  {
    "tag_name": "v1.0.0-rc.1",
    "name": "Gazeora v1.0.0-rc.1",
    "prerelease": true,

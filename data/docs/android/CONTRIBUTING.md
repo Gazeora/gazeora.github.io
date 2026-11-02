@@ -8,7 +8,9 @@ don't need to write code to help.
 - **Report a problem.**
   [Open an issue](https://github.com/Gazeora/Gazeora-Android/issues/new/choose) and pick the
   form that fits: bug report, crash or freeze, performance problem, or feature request. Name
-  your phone, its Android version, the stream protocol and the codec.
+  your phone, its Android version, the stream protocol and the codec. **Report a problem**
+  under **About** in the app opens the bug report with the app version and phone already
+  filled in.
 - **Tell us how your phone does.** Whether the stream plays smoothly, how the VR viewer looks
   and whether USB works on a phone model is as useful as a bug report: it builds the list of
   tested phones.
@@ -25,13 +27,15 @@ Found a security problem? Don't open an issue:
 
 ## Setting up
 
-1. Open the project in a recent Android Studio, and install what the [README](README.md#requirements)
-   lists from its SDK manager: Android SDK 37, the NDK and CMake.
-2. Build and run it as the README describes (`./gradlew assembleDebug`, `./gradlew installDebug`),
-   with Gazeora running on a PC on the same network to stream from.
-3. Run the tests: `./gradlew testDebugUnitTest` for the Java unit tests, and the native
-   protocol tests from `app/src/test/cpp` with any desktop C++17 compiler (see
-   [Tests](README.md#tests)).
+1. Open the project in a recent Android Studio, and install what
+   [Development](docs/development.md#prerequisites) lists from its SDK manager: Android SDK 37,
+   the NDK and CMake.
+2. Build and run it as [Development](docs/development.md#building) describes
+   (`./gradlew assembleDebug`, `./gradlew installDebug`), with Gazeora running on a PC on the
+   same network to stream from.
+3. Run the tests: `./gradlew testDebugUnitTest` for the Java unit tests, and the native host
+   tests from `app/src/test/cpp` with any desktop C++17 compiler (see
+   [Tests](docs/development.md#tests)).
 
 ## How the code is written
 
@@ -60,15 +64,17 @@ Match the code around your change. When in doubt, look at how a similar part alr
 2. Write commits in [Conventional Commits](https://www.conventionalcommits.org) form, one line
    each, lowercase, imperative, no period, at most 72 characters, with no body:
 
-   ```
+   ```text
    feat: add profile screen with viewmodel
    fix: reconnect the stream after wi-fi drops
    ```
 
    Types: `feat`, `fix`, `perf`, `refactor`, `docs`, `test`, `chore`, `style`, `build`. Make
    small commits, one logical change each.
-3. Add tests for new logic in the domain and data layers, and update the README when users or
-   contributors will notice the change.
+3. Add tests for new logic in the domain and data layers, and update the README or the guides
+   in `docs/` when users or contributors will notice the change, following
+   [DOCUMENTATION_RULES.md](DOCUMENTATION_RULES.md). Protocol changes also go in Gazeora's
+   canonical [stream format](https://github.com/Gazeora/Gazeora/blob/master/docs/stream-format.md).
 4. Check that `./gradlew assembleDebug` builds and the tests pass. CI runs both on every pull
    request.
 5. Open the pull request and fill in its template: what changed, and how you tested it (phone,
@@ -80,9 +86,20 @@ of getting the change in, not a judgment of it.
 ## License of contributions
 
 Gazeora for Android is free software under the [GNU GPL version 3](LICENSE) with the additional
-terms in [NOTICE](NOTICE). By opening a pull request, you confirm that you have the right to
-submit the work and agree that it is licensed under those same terms. Code or libraries from
-elsewhere must come under a license compatible with the GPL version 3; name it in the pull
-request, and add it to [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+terms in [NOTICE](NOTICE), and is also offered under a [commercial license](COMMERCIAL-LICENSE.md).
+So that every part of it can be offered both ways, contributors sign the
+[Contributor License Agreement](CLA.md) once: on your first pull request, a bot asks you to
+post a one-line comment that signs it. In short, you confirm that you have the right to submit
+the work, and you agree that:
+
+- it is licensed under the GPL version 3 with the terms in [NOTICE](NOTICE); and
+- you also grant Nithin Aashik a perpetual, worldwide, non-exclusive, royalty-free and
+  irrevocable license to use, change, sublicense and distribute it under other terms,
+  including the commercial license.
+
+You keep the copyright in your work, and can use it however you like. Code or libraries from
+elsewhere must come under a license compatible with the GPL version 3 that also allows the
+commercial license, such as MIT, BSD or Apache 2.0; name it in the pull request, and add it to
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 The Gazeora name and logo aren't covered by the license: see [TRADEMARKS.md](TRADEMARKS.md).

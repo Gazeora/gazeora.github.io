@@ -1,13 +1,41 @@
 {
  "platform": "android",
  "repo": "Gazeora/Gazeora-Android",
- "tag": "v1.0.0-rc.1",
- "guides": [],
+ "tag": "v1.0.1-rc.1",
+ "guides": [
+  {
+   "key": "user-guide",
+   "title": "User guide",
+   "path": "docs/user-guide.md"
+  },
+  {
+   "key": "permissions",
+   "title": "Permissions",
+   "path": "docs/permissions.md"
+  },
+  {
+   "key": "troubleshooting",
+   "title": "Troubleshooting",
+   "path": "docs/troubleshooting.md"
+  },
+  {
+   "key": "architecture",
+   "title": "Architecture",
+   "path": "docs/architecture.md"
+  },
+  {
+   "key": "development",
+   "title": "Development",
+   "path": "docs/development.md"
+  }
+ ],
  "project": [
   "README.md",
   "CONTRIBUTING.md",
   "LICENSE",
   "NOTICE",
+  "COMMERCIAL-LICENSE.md",
+  "CLA.md",
   "TRADEMARKS.md",
   "THIRD_PARTY_NOTICES.md"
  ]
